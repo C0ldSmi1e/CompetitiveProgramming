@@ -1,0 +1,869 @@
+snippet debug
+template <typename A, typename B>
+string to_string(pair<A, B> p);
+
+string to_string(const string& s) { return '"' + s + '"'; }
+
+string to_string(const char* s) { return to_string((string)s); } 
+
+string to_string(const char c) { return to_string((string)"" + c); } 
+
+string to_string(bool b) { return (b ? "true" : "false"); }
+
+string to_string(vector<bool> v) {
+  bool first = true;
+  string res = "{";
+  for (int i = 0; i < static_cast<int>(v.size()); i++) {
+    if (!first) {
+      res += ", ";
+    } 
+    first = false;
+    res += to_string(v[i]);
+  }
+  res += "}";
+  return res;
+}
+
+template <size_t N>
+string to_string(bitset<N> v) {
+  string res = "";
+  for (size_t i = 0; i < N; i++) {
+    res += static_cast<char>('0' + v[i]);
+  }
+  return res;
+}
+
+template <typename A>
+string to_string(A v) {
+  bool first = true;
+  string res = "{";
+  for (const auto &x : v) {
+    if (!first) {
+	  res += ", ";
+    }
+    first = false;
+    res += to_string(x);
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A> heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A, typename B>
+string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+
+template <typename ... Ts>
+string to_string(const Ts& ... ts) {
+  stringstream ss;
+  const char* sep = "";
+  ((static_cast<void>(ss << sep << ts), sep = ", "), ...);
+  return ss.str();
+}
+
+template <typename... Args>
+string to_string(const std::tuple<Args...> &t) {
+  string res = "(";
+  apply([&](const auto&... ts) { res += to_string(ts...); }, t);
+  res += ")";
+  return res;
+}
+
+void debug_out() { cout << '\n'; }
+
+template <typename Head, typename... Tail>
+void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
+
+#ifdef LOCAL
+#define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)
+#else
+#define debug(...) 42
+#endif
+endsnippet
+
+snippet modint
+template <typename T>
+T inverse(T a, T m) {
+  T u = 0, v = 1;
+  while (a != 0) {
+    T t = m / a;
+    m -= t * a; swap(a, m);
+    u -= t * v; swap(u, v);
+  }
+  assert(m == 1);
+  return u;
+}
+ 
+template <typename T>
+class Modular {
+ public:
+  using Type = typename decay<decltype(T::value)>::type;
+ 
+  constexpr Modular() : value() {}
+  template <typename U>
+  Modular(const U& x) {
+    value = normalize(x);
+  }
+ 
+  template <typename U>
+  static Type normalize(const U& x) {
+    Type v;
+    if (-mod() <= x && x < mod()) v = static_cast<Type>(x);
+    else v = static_cast<Type>(x % mod());
+    if (v < 0) v += mod();
+    return v;
+  }
+ 
+  const Type& operator()() const { return value; }
+  template <typename U>
+  explicit operator U() const { return static_cast<U>(value); }
+  constexpr static Type mod() { return T::value; }
+ 
+  Modular& operator+=(const Modular& other) { if ((value += other.value) >= mod()) value -= mod(); return *this; }
+  Modular& operator-=(const Modular& other) { if ((value -= other.value) < 0) value += mod(); return *this; }
+  template <typename U> Modular& operator+=(const U& other) { return *this += Modular(other); }
+  template <typename U> Modular& operator-=(const U& other) { return *this -= Modular(other); }
+  Modular& operator++() { return *this += 1; }
+  Modular& operator--() { return *this -= 1; }
+  Modular operator++(int) { Modular result(*this); *this += 1; return result; }
+  Modular operator--(int) { Modular result(*this); *this -= 1; return result; }
+  Modular operator-() const { return Modular(-value); }
+ 
+  template <typename U = T>
+  typename enable_if<is_same<typename Modular<U>::Type, int>::value, Modular>::type& operator*=(const Modular& rhs) {
+#ifdef _WIN32
+    uint64_t x = static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value);
+    uint32_t xh = static_cast<uint32_t>(x >> 32), xl = static_cast<uint32_t>(x), d, m;
+    asm(
+      "divl %4; \n\t"
+      : "=a" (d), "=d" (m)
+      : "d" (xh), "a" (xl), "r" (mod())
+    );
+    value = m;
+#else
+    value = normalize(static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value));
+#endif
+    return *this;
+  }
+  template <typename U = T>
+  typename enable_if<is_same<typename Modular<U>::Type, long long>::value, Modular>::type& operator*=(const Modular& rhs) {
+    long long q = static_cast<long long>(static_cast<long double>(value) * rhs.value / mod());
+    value = normalize(value * rhs.value - q * mod());
+    return *this;
+  }
+  template <typename U = T>
+  typename enable_if<!is_integral<typename Modular<U>::Type>::value, Modular>::type& operator*=(const Modular& rhs) {
+    value = normalize(value * rhs.value);
+    return *this;
+  }
+ 
+  Modular& operator/=(const Modular& other) { return *this *= Modular(inverse(other.value, mod())); }
+ 
+  friend const Type& abs(const Modular& x) { return x.value; }
+ 
+  template <typename U>
+  friend bool operator==(const Modular<U>& lhs, const Modular<U>& rhs);
+ 
+  template <typename U>
+  friend bool operator<(const Modular<U>& lhs, const Modular<U>& rhs);
+ 
+  template <typename V, typename U>
+  friend V& operator>>(V& stream, Modular<U>& number);
+ 
+ private:
+  Type value;
+};
+ 
+template <typename T> bool operator==(const Modular<T>& lhs, const Modular<T>& rhs) { return lhs.value == rhs.value; }
+template <typename T, typename U> bool operator==(const Modular<T>& lhs, U rhs) { return lhs == Modular<T>(rhs); }
+template <typename T, typename U> bool operator==(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) == rhs; }
+ 
+template <typename T> bool operator!=(const Modular<T>& lhs, const Modular<T>& rhs) { return !(lhs == rhs); }
+template <typename T, typename U> bool operator!=(const Modular<T>& lhs, U rhs) { return !(lhs == rhs); }
+template <typename T, typename U> bool operator!=(U lhs, const Modular<T>& rhs) { return !(lhs == rhs); }
+ 
+template <typename T> bool operator<(const Modular<T>& lhs, const Modular<T>& rhs) { return lhs.value < rhs.value; }
+ 
+template <typename T> Modular<T> operator+(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) += rhs; }
+template <typename T, typename U> Modular<T> operator+(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) += rhs; }
+template <typename T, typename U> Modular<T> operator+(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) += rhs; }
+ 
+template <typename T> Modular<T> operator-(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) -= rhs; }
+template <typename T, typename U> Modular<T> operator-(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) -= rhs; }
+template <typename T, typename U> Modular<T> operator-(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) -= rhs; }
+ 
+template <typename T> Modular<T> operator*(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) *= rhs; }
+template <typename T, typename U> Modular<T> operator*(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) *= rhs; }
+template <typename T, typename U> Modular<T> operator*(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) *= rhs; }
+ 
+template <typename T> Modular<T> operator/(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) /= rhs; }
+template <typename T, typename U> Modular<T> operator/(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) /= rhs; }
+template <typename T, typename U> Modular<T> operator/(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) /= rhs; }
+ 
+template<typename T, typename U>
+Modular<T> qp(const Modular<T>& a, const U& b) {
+  assert(b >= 0);
+  Modular<T> x = a, res = 1;
+  U p = b;
+  while (p > 0) {
+	if (p & 1) {
+	  res *= x;
+	}
+    x *= x;
+    p >>= 1;
+  }
+  return res;
+}
+ 
+template <typename T>
+bool IsZero(const Modular<T>& number) {
+  return number() == 0;
+}
+ 
+template <typename T>
+string to_string(const Modular<T>& number) {
+  return to_string(number());
+}
+ 
+// U == std::ostream? but done this way because of fastoutput
+template <typename U, typename T>
+U& operator<<(U& stream, const Modular<T>& number) {
+  return stream << number();
+}
+ 
+// U == std::istream? but done this way because of fastinput
+template <typename U, typename T>
+U& operator>>(U& stream, Modular<T>& number) {
+  typename common_type<typename Modular<T>::Type, long long>::type x;
+  stream >> x;
+  number.value = Modular<T>::normalize(x);
+  return stream;
+}
+ 
+/*
+using ModType = int;
+ 
+struct VarMod { static ModType value; };
+ModType VarMod::value;
+ModType& md = VarMod::value;
+using Mint = Modular<VarMod>;
+*/
+ 
+constexpr int md = ...;  // set default mod.
+using Mint = Modular<std::integral_constant<decay<decltype(md)>::type, md>>;
+
+/*
+vector<Mint> fact(1, 1);
+vector<Mint> inv_fact(1, 1);
+ 
+Mint C(int n, int k) {
+  if (k < 0 || k > n) {
+    return 0;
+  }
+  while ((int) fact.size() < n + 1) {
+    fact.push_back(fact.back() * (int) fact.size());
+    inv_fact.push_back(1 / fact.back());
+  }
+  return fact[n] * inv_fact[k] * inv_fact[n - k];
+}
+
+Mint Fact(int n) {
+  assert(n >= 0);
+  while ((int) fact.size() < n + 1) {
+    fact.push_back(fact.back() * (int) fact.size());
+    inv_fact.push_back(1 / fact.back());
+  }
+  return fact[n];
+}
+*/
+endsnippet
+
+snippet rand
+mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
+
+long long rand(long long l, long long r) {
+  return (rng() % (r - l)) + l;
+}
+endsnippet
+
+snippet dsu
+class Dsu {
+ public:
+  vector<int> p, sz;
+  int n;
+  Dsu(int _n) {
+    n = _n + 1;
+    p.resize(n);
+    sz.assign(n, 1);
+    iota(p.begin(), p.end(), 0);
+  }
+  inline int get(int x) {
+    return (x == p[x] ? x : (p[x] = get(p[x])));
+  }
+  inline bool unite(int x, int y) {
+    x = get(x);
+    y = get(y);
+    if (x != y) {
+      p[x] = y;
+      sz[y] += sz[x];
+      return true;
+    }
+    return false;
+  }
+  inline int getSize(int x) {
+    return sz[get(x)];
+  }
+};
+endsnippet
+
+snippet rmq
+// usage:
+//   auto fun = [&](int i, int j) { return min(i, j); };
+//   Rmq<int, decltype(fun)> rmq(a, fun);
+// or:
+//   Rmq<int> rmq(a, [&](int i, int j) { return min(i, j); });
+template <typename T, class F = function<T(const T&, const T&)>>
+class Rmq {
+ public:
+  int n;
+  vector<vector<T>> mat;
+  F func;
+
+  Rmq(const vector<T>& a, const F& f) : func(f) {
+    n = static_cast<int>(a.size());
+    int max_log = 32 - __builtin_clz(n);
+    mat.resize(max_log);
+    mat[0] = a;
+    for (int j = 1; j < max_log; j++) {
+      mat[j].resize(n - (1 << j) + 1);
+      for (int i = 0; i <= n - (1 << j); i++) {
+        mat[j][i] = func(mat[j - 1][i], mat[j - 1][i + (1 << (j - 1))]);
+      }
+    }
+  }
+
+  T get(int from, int to) const {
+    assert(0 <= from && from <= to && to <= n - 1);
+    int lg = 32 - __builtin_clz(to - from + 1) - 1;
+    return func(mat[lg][from], mat[lg][to - (1 << lg) + 1]);
+  }
+};
+endsnippet
+
+snippet lca
+template <typename A, typename B>
+class Lca {
+ public:
+  int n, root, lg;
+  vector<A> dist;
+  vector<int> depth;
+  vector<vector<int> > fa;
+
+  Lca(const vector<vector<pair<int, B> > > &g, int root) {
+    n = static_cast<int>(g.size());
+    lg = 32 - __builtin_clz(n);
+    fa.resize(n);
+    dist.resize(n);
+    depth.resize(n);
+    for (int i = 0; i < n; i++) {
+      fa[i].resize(lg);
+    }
+    depth[root] = 0;
+    fa[root][0] = root;
+    vector<int> q;
+    q.push_back(root);
+    for (int qq = 0; qq < (int) q.size(); qq++) {
+      int u = q[qq];
+      for (int i = 1; i < lg; i++) {
+        fa[u][i] = fa[fa[u][i - 1]][i - 1];
+      }
+      for (auto &[v, w] : g[u]) {
+        if (v == fa[u][0]) {
+          continue;
+        }
+        depth[v] = depth[u] + 1;
+        dist[v] = dist[u] + w;
+        fa[v][0] = u;
+        q.push_back(v);
+      }
+    }
+  }
+  int getLca(int a, int b) const {
+	assert(a >= 0 && a < n && b >= 0 && b < n);
+    if (depth[a] < depth[b]) {
+      swap(a, b);
+    }
+    for (int k = lg - 1; k >= 0; k--) {
+      if (depth[fa[a][k]] >= depth[b]) {
+        a = fa[a][k];
+      }
+    }
+    if (a == b) {
+      return a;
+    }
+    for (int k = lg - 1; k >= 0; k--) {
+      if (fa[a][k] != fa[b][k]) {
+        a = fa[a][k];
+        b = fa[b][k];
+      }
+    }
+    return fa[a][0];
+  }
+  A getDist(int a, int b) const {
+	assert(a >= 0 && a < n && b >= 0 && b < n);
+    int anc = getLca(a, b);
+    return dist[a] + dist[b] - 2 * dist[anc];
+  }
+};
+endsnippet
+
+snippet Dijkstra
+template <typename A, typename B>
+vector<A> Dijkstra(const vector<vector<pair<int, B> > > &g, int start, const A &INF) {
+  int n = static_cast<int>(g.size());
+  assert(start >= 0 && start < n);
+  vector<A> dist(n, INF);
+  dist[start] = 0;
+  priority_queue<pair<A, int>, vector<pair<A, int> >, greater<pair<A, int> > > heap;
+  heap.emplace(dist[start], start);
+  while ((int) heap.size() > 0) {
+    auto [d, u] = heap.top();
+    heap.pop();
+    if (dist[u] != d) {
+      continue;
+    }
+    for (auto &[v, w] : g[u]) {
+      if (dist[v] > w + dist[u]) {
+        dist[v] = w + dist[u];
+        heap.emplace(dist[v], v);
+      }
+    }
+  }
+  // returns INF if there's no path
+  return dist;
+}
+endsnippet
+
+snippet stringhash
+/*
+ * hash seed:
+ * 131, 13331, 146527, 19260817, 378551
+ * 63689, 1315423911, 5381, 65599, 131313
+ * mod:
+ * 1000000007, 1000000009, 998244353
+*/
+
+#define STRING_HASH_MOD
+
+class StringHash {
+ public:
+  int n;
+  unsigned long long seed, mod;
+  vector<unsigned long long> p, h;
+ 
+  StringHash(const string &s, unsigned long long _seed = 13331, unsigned long long _mod = 998244353) : seed(_seed), mod(_mod) {
+    n = static_cast<int>(s.size());
+    p.resize(n + 1);
+    h.resize(n + 1);
+    p[0] = 1;
+    for (int i = 0; i < n; i++) {
+#ifdef STRING_HASH_MOD
+      p[i + 1] = p[i] * seed % mod;
+      h[i + 1] = (h[i] * seed + s[i]) % mod;
+#else
+      p[i + 1] = p[i] * seed;
+      h[i + 1] = h[i] * seed + s[i];
+#endif
+    }
+  }
+  // return hash code [l, r)
+  inline unsigned long long get(int l, int r) {
+    assert(l >= 0 && r <= n && l <= r);
+#ifdef STRING_HASH_MOD
+    return (h[r] - h[l] * p[r - l] % mod + mod) % mod;
+#else
+    return h[r] - h[l] * p[r - l];
+#endif
+  }
+};
+endsnippet
+
+snippet fenwick
+template <typename T>
+class Fenwick {
+ public:
+  vector<T> fenw;
+  int n;
+  Fenwick(int _n) : n(_n) {
+    fenw.resize(n);
+  }
+  inline void add(int x, T v) {
+    assert(x >= 0 && x < n);
+    while (x < n) {
+      fenw[x] += v;
+      x |= (x + 1);
+    }
+  }
+  inline T get(int x) {
+    T res{};
+    while (x >= 0) {
+      res += fenw[x];
+      x = (x & (x + 1)) - 1;
+    }
+    return res;
+  }
+  inline T get(int l, int r) {
+    assert(l >= 0 && l < n && r >= 0 && r < n);
+    T res = get(r);
+    if (l - 1 >= 0) {
+      res -= get(l - 1);
+    }
+    return res;
+  }
+};
+// struct node {
+//   int a = ...; // don't forget to set default value
+//   inline void operator += (node &other) {
+//     ...
+//   }
+// };
+endsnippet
+
+snippet tarjanscc
+vector<int> FindSCC(const vector<vector<int>> &g, int &id) {
+  int n = static_cast<int>(g.size());
+  int top = 0;
+  vector<int> comp(n, -1), in(n, -1), out(n, -1), stk(n + 1, -1), order;
+  function<int(int u)> tarjan = [&](int u) -> int {
+    assert(top >= 0 && top <= n);
+    stk[top++] = u;
+    int low = in[u] = (int) order.size();
+    order.push_back(u);
+    for (auto &v : g[u]) {
+      if (in[v] == -1) {
+        low = min(low, tarjan(v));
+        continue;
+      }
+      if (comp[v] == -1) {
+        low = min(low, in[v]);
+      }
+    }
+    if (low == in[u]) {
+      while (stk[top] != u) {
+        assert(top >= 0 && top <= n);
+        comp[stk[--top]] = id;
+      }
+      id++;
+    }
+    out[u] = (int) order.size() - 1;
+    return low;
+  };
+  for (int i = 0; i < n; i++) {
+    if (in[i] == -1) {
+      tarjan(i);
+    }
+  }
+  return comp;
+}
+endsnippet
+
+snippet topsort
+// Note: if there is a cycle, the size of the return will be less than n.
+vector<int> TopologicalSort(const vector<vector<int>> &g) {
+  int n = static_cast<int>(g.size());
+  vector<int> din(n, 0), order;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < (int) g[i].size(); j++) {
+      din[g[i][j]]++;
+    }
+  }
+  for (int i = 0; i < n; i++) {
+    if (din[i] == 0) {
+      order.emplace_back(i);
+    }
+  }
+  for (int i = 0; i < (int) order.size(); i++) {
+    int u = order[i];
+    for (int j = 0; j < (int) g[u].size(); j++) {
+      if (--din[g[u][j]] == 0) {
+        order.emplace_back(g[u][j]);
+      }
+    }
+  }
+  return order;
+}
+endsnippet
+
+snippet segtree
+class SegmentTree {
+ public:
+  struct Node {
+    // remember to set default value
+    ...
+    void apply(int l, int r, ... v) {
+      // [l, r] is range of this node
+      assert(l <= r);
+      ...
+    }
+  };
+
+  inline Node unite(const Node &a, const Node &b) const {
+    Node res{};
+    ...
+    return res;
+  }
+
+  inline void pushdown(int u, int l, int r) {
+    assert(u >= 0 && u < 2 * n && l <= r);
+    int mid = (l + r) >> 1;
+    int lson = u + 1, rson = u + ((mid - l + 1) << 1);
+    // [l, r] is range of tr[u]
+    // pushdown from u into lson and rson
+    // remember to clear lazy tag in u
+    ...
+  /*
+    if (tr[u].add != 0) {
+      tr[lson].apply(l, mid, tr[u].add);
+      tr[rson].apply(mid + 1, r, tr[u].add);
+      tr[u].add = 0;
+    }
+  */
+  }
+
+  inline void pushup(int u, int lson, int rson) {
+    tr[u] = unite(tr[lson], tr[rson]);
+  }
+
+  int n;
+  vector<Node> tr;
+  
+  void build(int u, int l, int r) {
+    if (l == r) {
+      return;
+    }
+    int mid = (l + r) >> 1;
+    int lson = u + 1, rson = u + ((mid - l + 1) << 1);
+    build(lson, l, mid);
+    build(rson, mid + 1, r);
+    pushup(u, lson, rson);
+  }
+
+  template <typename T>
+  void build(int u, int l, int r, const vector<T> &v) {
+    if (l == r) {
+      tr[u].apply(l, r, v[l]);
+      return;
+    }
+    int mid = (l + r) >> 1;
+    int lson = u + 1, rson = u + ((mid - l + 1) << 1);
+    build(lson, l, mid, v);
+    build(rson, mid + 1, r, v);
+    pushup(u, lson, rson);
+  }
+
+  inline Node query(int u, int l, int r, int ql, int qr) {
+    // [l, r] is range of tr[u]
+    // [ql, qr] is range of query
+    if (ql <= l && r <= qr) {
+      return tr[u];
+    }
+    int mid = (l + r) >> 1;
+    int lson = u + 1, rson = u + ((mid - l + 1) << 1);
+    pushdown(u, l, r);
+    Node res{};
+    if (qr <= mid) {
+      res = query(lson, l, mid, ql, qr);
+    } else if (ql > mid) {
+      res = query(rson, mid + 1, r, ql, qr);
+    } else {
+      res = unite(query(lson, l, mid, ql, qr), query(rson, mid + 1, r, ql, qr));
+    }
+    pushup(u, lson, rson);
+    return res;
+  }
+
+  template <typename... T>
+  inline void modify(int u, int l, int r, int ml, int mr, const T&... v) {
+    // [l, r] is range of tr[u]
+    // [ml, mr] is range of modification
+    if (ml <= l && r <= mr) {
+      tr[u].apply(l, r, v...);
+      return;
+    }
+    int mid = (l + r) >> 1;
+    int lson = u + 1, rson = u + ((mid - l + 1) << 1);
+    pushdown(u, l, r);
+    if (ml <= mid) {
+      modify(lson, l, mid, ml, mr, v...);
+    }
+    if (mr > mid) {
+       modify(rson, mid + 1, r, ml, mr, v...);
+    }
+    pushup(u, lson, rson);
+  }
+
+  SegmentTree(int _n) : n(_n) {
+    assert(n > 0);
+    tr.resize(2 * n - 1);
+    build(0, 0, n - 1);
+  }
+
+  template <typename T>
+  SegmentTree(const vector<T> &v) {
+    n = (int) v.size();
+    assert(n > 0);
+    tr.resize(2 * n - 1);
+    build(0, 0, n - 1, v);
+  }
+
+  inline Node query(int ql, int qr) {
+    assert(ql >= 0 && ql <= qr && qr < n);
+    return query(0, 0, n - 1, ql, qr);
+  }
+
+  inline Node query(int p) {
+    assert(p >= 0 && p < n);
+    return query(0, 0, n - 1, p, p);
+  }
+
+  template <typename... T>
+  inline void modify(int ml, int mr, const T&... v) {
+    assert(ml >= 0 && ml <= mr && mr < n);
+    modify(0, 0, n - 1, ml, mr, v...);
+  }
+};
+endsnippet
+
+snippet suffixarray
+template <typename T>
+vector<int> SuffixArray(int n, const T &s, int char_bound) {
+  vector<int> a(n);
+  if (n == 0) {
+    return a;
+  }
+  if (char_bound != -1) {
+    vector<int> aux(char_bound, 0);
+    for (int i = 0; i < n; i++) {
+      aux[s[i]]++;
+    }
+    int sum = 0;
+    for (int i = 0; i < char_bound; i++) {
+      int add = aux[i];
+      aux[i] = sum;
+      sum += add;
+    }
+    for (int i = 0; i < n; i++) {
+      a[aux[s[i]]++] = i;
+    }
+  } else {
+    iota(a.begin(), a.end(), 0);
+    sort(a.begin(), a.end(), [&s](int i, int j) { return s[i] < s[j]; });
+  }
+  vector<int> sorted_by_second(n);
+  vector<int> ptr_group(n);
+  vector<int> new_group(n);
+  vector<int> group(n);
+  group[a[0]] = 0;
+  for (int i = 1; i < n; i++) {
+    group[a[i]] = group[a[i - 1]] + (!(s[a[i]] == s[a[i - 1]]));
+  }
+  int cnt = group[a[n - 1]] + 1;
+  int step = 1;
+  while (cnt < n) {
+    int at = 0;
+    for (int i = n - step; i < n; i++) {
+      sorted_by_second[at++] = i;
+    }
+    for (int i = 0; i < n; i++) {
+      if (a[i] - step >= 0) {
+        sorted_by_second[at++] = a[i] - step;
+      }
+    }
+    for (int i = n - 1; i >= 0; i--) {
+      ptr_group[group[a[i]]] = i;
+    }
+    for (int i = 0; i < n; i++) {
+      int x = sorted_by_second[i];
+      a[ptr_group[group[x]]++] = x;
+    }
+    new_group[a[0]] = 0;
+    for (int i = 1; i < n; i++) {
+      if (group[a[i]] != group[a[i - 1]]) {
+        new_group[a[i]] = new_group[a[i - 1]] + 1;
+      } else {
+        int pre = (a[i - 1] + step >= n ? -1 : group[a[i - 1] + step]);
+        int cur = (a[i] + step >= n ? -1 : group[a[i] + step]);
+        new_group[a[i]] = new_group[a[i - 1]] + (pre != cur);
+      }
+    }
+    swap(group, new_group);
+    cnt = group[a[n - 1]] + 1;
+    step <<= 1;
+  }
+  return a;
+}
+
+template <typename T>
+vector<int> SuffixArray(const T &s, int char_bound) {
+  return SuffixArray((int) s.size(), s, char_bound);
+}
+
+template <typename T>
+vector<int> BuildLcp(int n, const T &s, const vector<int> &sa) {
+  assert((int) sa.size() == n);
+  vector<int> pos(n);
+  for (int i = 0; i < n; i++) {
+    pos[sa[i]] = i;
+  }
+  vector<int> lcp(max(n - 1, 0));
+  int k = 0;
+  for (int i = 0; i < n; i++) {
+    k = max(k - 1, 0);
+    if (pos[i] == n - 1) {
+      k = 0;
+    } else {
+      int j = sa[pos[i] + 1];
+      while (i + k < n && j + k < n && s[i + k] == s[j + k]) {
+        k++;
+      }
+      lcp[pos[i]] = k;
+    }
+  }
+  return lcp;
+}
+
+template <typename T>
+vector<int> BuildLcp(const T &s, const vector<int> &sa) {
+  return BuildLcp((int) s.size(), s, sa);
+}
+endsnippet
