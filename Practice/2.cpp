@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-06 09:32:31
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -22,6 +27,7 @@ using namespace std;
 typedef long long LL;
 typedef vector<LL> VL;
 typedef vector<int> VI;
+typedef long double LD;
 typedef vector<bool> VB;
 typedef pair<LL, LL> PLL;
 typedef vector<string> VS;
@@ -32,6 +38,7 @@ typedef pair<double, double> PDD;
 typedef tuple<int, int, int> TIII;
 typedef vector<pair<LL, LL> > VPLL;
 typedef vector<pair<int, int> > VPII;
+typedef vector<tuple<int, int, int> > VTIII;
 
 template <typename A> using VE = vector<A>;
 template <typename A> using USET = unordered_set<A>;
@@ -49,6 +56,124 @@ template <typename A, typename... B> A MIN(const A &a, const B&... b) { return m
 template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(A a, A b) { return *max_element(a, b); }
 template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(A a, A b) { return *min_element(a, b); }
 
+template <typename A, typename B>
+string to_string(pair<A, B> p);
+
+string to_string(const string& s) { return '"' + s + '"'; }
+
+string to_string(const char* s) { return to_string((string)s); } 
+
+string to_string(const char c) { return to_string((string)"" + c); } 
+
+string to_string(bool b) { return (b ? "true" : "false"); }
+
+string to_string(vector<bool> v) {
+  bool first = true;
+  string res = "{";
+  for (int i = 0; i < static_cast<int>(v.size()); i++) {
+    if (!first) {
+      res += ", ";
+    } 
+    first = false;
+    res += to_string(v[i]);
+  }
+  res += "}";
+  return res;
+}
+
+template <size_t N>
+string to_string(bitset<N> v) {
+  string res = "";
+  for (size_t i = 0; i < N; i++) {
+    res += static_cast<char>('0' + v[i]);
+  }
+  return res;
+}
+
+template <typename A>
+string to_string(A v) {
+  bool first = true;
+  string res = "{";
+  for (const auto &x : v) {
+    if (!first) {
+    res += ", ";
+    }
+    first = false;
+    res += to_string(x);
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A> heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A, typename B>
+string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+
+template <typename ... Ts>
+string to_string(const Ts& ... ts) {
+  stringstream ss;
+  const char* sep = "";
+  ((static_cast<void>(ss << sep << ts), sep = ", "), ...);
+  return ss.str();
+}
+
+template <typename... Args>
+string to_string(const std::tuple<Args...> &t) {
+  string res = "(";
+  apply([&](const auto&... ts) { res += to_string(ts...); }, t);
+  res += ")";
+  return res;
+}
+
+void debug_out() { cout << '\n'; }
+
+template <typename Head, typename... Tail>
+void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
+
+#ifdef LOCAL
+#define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)
+#else
+#define debug(...) 42
+#endif
+
+mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
+
+// [l, r]
+int rand(int l, int r) {
+  return (int) (rng() % (r + 1 - l)) + l;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //////////////////// DO NOT TOUCH BEFORE THIS LINE ////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -62,6 +187,63 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int n, k;
+  cin >> n >> k;
+  const int D = 10 + 1;
+  const int N = 60 + 5;
+  VI a(n), cnt(N);
+  VE<VI> idx(N);
+  for (int i = 0; i < n; i++) {
+    cin >> a[i];
+    a[i] += D;
+    cnt[a[i]]++;
+    idx[a[i]].EB(i);
+  }
+  int res = 0;
+  debug(a);
+  for (int x = 0; x < N; x++) {
+    int m = SZ(idx[x]);
+    if (m == 0) {
+      continue;
+    }
+    res = max(res, m);
+    int y = x + k;
+    if (x == y) {
+      continue;
+    }
+    if (x == 17) {
+      debug(x, idx[x]);
+      debug(y, idx[y]);
+    }
+    VI s(m, 1);
+    VI sub(m);
+    for (int i = 1; i < m; i++) {
+      int l = idx[x][i - 1], r = idx[x][i];
+      int ll = (int) (LB(ALL(idx[y]), l) - idx[y].begin());
+      int rr = (int) (UB(ALL(idx[y]), r) - idx[y].begin());
+      s[i - 1] -= rr - ll;
+      sub[i - 1] = rr - ll;
+    }
+    int mx = max(res, s[0] + sub[0] + cnt[y]);
+    res = max(res, s[0] + sub[0] + cnt[y]);
+    int mn = min(0, s[0]);
+    for (int i = 1; i < m; i++) {
+      s[i] += s[i - 1];
+      mx = max(mx, cnt[y] + s[i] + sub[i] - mn);
+      res = max(res, cnt[y] + s[i] + sub[i] - mn);
+      mn = min(mn, s[i]);
+      if (x == 17) {
+        debug(i, mn);
+      }
+    }
+    if (x == 17) {
+      debug(s);
+      debug(sub);
+      debug(mx);
+      cout << "------\n";
+    }
+  }
+  cout << res << '\n';
   return 0;
 }
 

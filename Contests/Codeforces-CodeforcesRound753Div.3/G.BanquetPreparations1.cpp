@@ -1,5 +1,8 @@
-// time-limit: 2000
-// problem-url: https://codeforces.com/contest/1607/problem/G
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-05 14:52:07
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -24,6 +27,7 @@ using namespace std;
 typedef long long LL;
 typedef vector<LL> VL;
 typedef vector<int> VI;
+typedef long double LD;
 typedef vector<bool> VB;
 typedef pair<LL, LL> PLL;
 typedef vector<string> VS;
@@ -34,6 +38,7 @@ typedef pair<double, double> PDD;
 typedef tuple<int, int, int> TIII;
 typedef vector<pair<LL, LL> > VPLL;
 typedef vector<pair<int, int> > VPII;
+typedef vector<tuple<int, int, int> > VTIII;
 
 template <typename A> using VE = vector<A>;
 template <typename A> using USET = unordered_set<A>;
@@ -61,11 +66,49 @@ const int N = 100010, M = 1010;
 
 
 // read the question carefully!!!
-int main()
-{
-    SOS;
+int main() {
+  SOS;
 
-    return 0;
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    LL m;
+    cin >> n >> m;
+    VL a(n), b(n);
+    VL maxx(n), minx(n);
+    LL s = n * m, smax = 0, smin = 0;
+    for (int i = 0; i < n; i++) {
+      cin >> a[i] >> b[i];
+      maxx[i] = min(a[i], m);
+      minx[i] = max(0LL, m - b[i]);
+      smax += maxx[i];
+      smin += minx[i];
+      s += a[i] - b[i];
+    }
+    if (s >= 2 * smax) {
+      cout << s - 2 * smax << '\n';
+      for (int i = 0; i < n; i++) {
+        cout << maxx[i] << ' ' << m - maxx[i] << '\n';
+      }
+      continue;
+    }
+    if (s <= 2 * smin) {
+      cout << 2 * smin - s << '\n';
+      for (int i = 0; i < n; i++) {
+        cout << minx[i] << ' ' << m - minx[i] << '\n';
+      }
+      continue;
+    }
+    cout << s % 2 << '\n';
+    for (int i = 0; i < n; i++) {
+      LL diff = min(maxx[i] - minx[i], (s - smin * 2) / 2);
+      smin += diff;
+      LL take = minx[i] + diff;
+      cout << take << ' ' << m - take << '\n';
+    }
+  }
+  return 0;
 }
 
 // GOOD LUCK!!!

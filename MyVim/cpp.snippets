@@ -311,8 +311,9 @@ endsnippet
 snippet rand
 mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
 
+// [l, r]
 long long rand(long long l, long long r) {
-  return (rng() % (r - l)) + l;
+  return (rng() % (r + 1 - l)) + l;
 }
 endsnippet
 
