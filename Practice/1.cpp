@@ -5,55 +5,25 @@ using namespace std;
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(0), cout.tie(0);
-  int n, m, q;
-  cin >> n >> m >> q;
-  vector<vector<vector<long long>>> f(n, vector<vector<long long>>(m, vector<long long>(2)));
-  long long res = 0;
-  for (int i = n - 1; i >= 0; i--) {
-    for (int j = m - 1; j >= 0; j--) {
-      f[i][j][0] = f[i][j][1] = 1;
-      if (i + 1 < n) {
-        f[i][j][0] += f[i + 1][j][1];
-      }
-      if (j + 1 < m) {
-        f[i][j][1] += f[i][j + 1][0];
-      }
-      res += f[i][j][0] + f[i][j][1] - 1;
-    }
+  int n;
+  long long x;
+  cin >> n >> x;
+  vector<long long> a(n);
+  for (auto &u : a) {
+    cin >> u;
   }
-  vector<vector<int>> st(n, vector<int>(m, 1));
-  auto go = [&](int x, int y, int dx, int dy) -> long long {
-    int cnt = 0;
-    while (true) {
-      x += dx;
-      y += dy;
-      if (x < 0 || y < 0 || x >= n || y >= m || st[x][y] == -1) {
-        break;
-      }
-      ++cnt;
-      swap(dx, dy);
+  map<pair<int, long long>, long long> f;
+  function<long long(int, long long)> dp = [&](int i, long long j) -> long long {
+    if (i == 0 || j == 0) {
+      return j;
     }
-    return cnt;
+    if (f.count(make_pair(i, j)) != 0) {
+      return f[make_pair(i, j)];
+    }
+    long long res = dp(i - 1, j % a[i]) + j / a[i];
+    res = min(res, dp(i - 1, (a[i] - j % a[i]) % a[i]) + (j + a[i] - 1) / a[i]);
+    return f[make_pair(i, j)] = res;
   };
-  while (q--) {
-    int x, y;
-    cin >> x >> y;
-    --x, --y;
-    long long t = 0;
-    {
-      long long c1 = go(x, y, -1, 0);
-      long long c2 = go(x, y, 0, 1);
-      t += (c1 + 1) * (c2 + 1) - 1;
-    }
-    {
-      long long c1 = go(x, y, 0, -1);
-      long long c2 = go(x, y, 1, 0);
-      t += (c1 + 1) * (c2 + 1) - 1;
-    }
-    res -= st[x][y] * t;
-    res -= st[x][y];
-    st[x][y] *= -1;
-    cout << res << '\n';
-  }
+  cout << dp(n - 1, x) << '\n';
   return 0;
 }

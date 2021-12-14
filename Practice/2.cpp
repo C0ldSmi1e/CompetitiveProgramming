@@ -1,250 +1,58 @@
-/**
- * Author: Daniel
- * Created Time: 2021-12-06 09:32:31
-**/
-
-#include <bits/stdc++.h>
+#include <iostream>
+#include <cstring>
+#include <algorithm>
 
 using namespace std;
 
-#define F first 
-#define S second
-#define ER erase
-#define IS insert
-#define PI acos(-1)
-#define PB pop_back
-#define MP make_pair
-#define MT make_tuple
-#define LB lower_bound
-#define UB upper_bound
-#define EB emplace_back
-#define lowbit(x) (x & -x)
-#define SZ(x) ((int)x.size())
-#define ALL(x) x.begin(), x.end()
-#define RALL(x) x.rbegin(), x.rend()
-#define SOS ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(10)
+const int N = 110, M = 1 << 6, K = 21, MOD = 1e9 + 7;
 
-typedef long long LL;
-typedef vector<LL> VL;
-typedef vector<int> VI;
-typedef long double LD;
-typedef vector<bool> VB;
-typedef pair<LL, LL> PLL;
-typedef vector<string> VS;
-typedef vector<double> VD;
-typedef pair<int, int> PII;
-typedef unsigned long long ULL;
-typedef pair<double, double> PDD;
-typedef tuple<int, int, int> TIII;
-typedef vector<pair<LL, LL> > VPLL;
-typedef vector<pair<int, int> > VPII;
-typedef vector<tuple<int, int, int> > VTIII;
+int n, m, k;
+int f[N][M][M][K];
 
-template <typename A> using VE = vector<A>;
-template <typename A> using USET = unordered_set<A>;
-template <typename A> using HEAP = priority_queue<A>;
-template <typename A, typename B> using PA = pair<A, B>;
-template <typename A, typename B> using UMAP = unordered_map<A, B>;
-template <typename A> using RHEAP = priority_queue<A, vector<A>, greater<A> >;
-
-template <typename A> A MAX(const A &a) { return a; }
-template <typename A> A MIN(const A &a) { return a; }
-template <typename A> A MAX(const A *a, const A *b) { return *max_element(a, b); }
-template <typename A> A MIN(const A *a, const A *b) { return *min_element(a, b); }
-template <typename A, typename... B> A MAX(const A &a, const B&... b) { return max(a, MAX(b...)); }
-template <typename A, typename... B> A MIN(const A &a, const B&... b) { return min(a, MIN(b...)); }
-template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(A a, A b) { return *max_element(a, b); }
-template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(A a, A b) { return *min_element(a, b); }
-
-template <typename A, typename B>
-string to_string(pair<A, B> p);
-
-string to_string(const string& s) { return '"' + s + '"'; }
-
-string to_string(const char* s) { return to_string((string)s); } 
-
-string to_string(const char c) { return to_string((string)"" + c); } 
-
-string to_string(bool b) { return (b ? "true" : "false"); }
-
-string to_string(vector<bool> v) {
-  bool first = true;
-  string res = "{";
-  for (int i = 0; i < static_cast<int>(v.size()); i++) {
-    if (!first) {
-      res += ", ";
-    } 
-    first = false;
-    res += to_string(v[i]);
-  }
-  res += "}";
-  return res;
+int get_count(int x)
+{
+    int res = 0;
+    while (x)
+    {
+        res ++ ;
+        x -= x & -x;
+    }
+    return res;
 }
 
-template <size_t N>
-string to_string(bitset<N> v) {
-  string res = "";
-  for (size_t i = 0; i < N; i++) {
-    res += static_cast<char>('0' + v[i]);
-  }
-  return res;
+int main()
+{
+    cin >> n >> m >> k;
+    f[0][0][0][0] = 1;
+
+    int cnt = 0;
+    for (int i = 1; i <= m; i ++ )
+        for (int a = 0; a < 1 << n; a ++ )
+            for (int b = 0; b < 1 << n; b ++ )
+            {
+                if (a & (b << 2) || b & (a << 2)) continue;
+                for (int c = 0; c < 1 << n; c ++ )
+                {
+                    if (c & (b << 2) || b & (c << 2)) continue;
+                    if (c & (a << 1) || a & (c << 1)) continue;
+                    int t = get_count(c);
+                    for (int u = t; u <= k; u ++, cnt ++ )
+                        f[i][b][c][u] = (f[i][b][c][u] + f[i - 1][a][b][u - t]) % MOD;
+                }
+            }
+
+    int res = 0;
+    int t = 0;
+    for (int i = 0; i < 1 << n; i ++ )
+        for (int j = 0; j < 1 << n; j ++ )
+        {
+          for (int cc = 0; cc <= k; cc++) {
+            t += f[4][i][j][cc];
+          }
+            res = (res + f[2][i][j][k]) % MOD;
+        }
+    cout << t << endl;
+
+    cout << res << endl;
+    return 0;
 }
-
-template <typename A>
-string to_string(A v) {
-  bool first = true;
-  string res = "{";
-  for (const auto &x : v) {
-    if (!first) {
-    res += ", ";
-    }
-    first = false;
-    res += to_string(x);
-  }
-  res += "}";
-  return res;
-}
-
-template <typename A>
-string to_string(priority_queue<A> heap) {
-  bool first = true;
-  string res = "{";
-  while ((int) heap.size()) {
-    if (!first) {
-      res += ", ";
-    }
-    first = false;
-    res += to_string(heap.top());
-    heap.pop();
-  }
-  res += "}";
-  return res;
-}
-
-template <typename A>
-string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
-  bool first = true;
-  string res = "{";
-  while ((int) heap.size()) {
-    if (!first) {
-      res += ", ";
-    }
-    first = false;
-    res += to_string(heap.top());
-    heap.pop();
-  }
-  res += "}";
-  return res;
-}
-
-template <typename A, typename B>
-string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
-
-template <typename ... Ts>
-string to_string(const Ts& ... ts) {
-  stringstream ss;
-  const char* sep = "";
-  ((static_cast<void>(ss << sep << ts), sep = ", "), ...);
-  return ss.str();
-}
-
-template <typename... Args>
-string to_string(const std::tuple<Args...> &t) {
-  string res = "(";
-  apply([&](const auto&... ts) { res += to_string(ts...); }, t);
-  res += ")";
-  return res;
-}
-
-void debug_out() { cout << '\n'; }
-
-template <typename Head, typename... Tail>
-void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
-
-#ifdef LOCAL
-#define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)
-#else
-#define debug(...) 42
-#endif
-
-mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
-
-// [l, r]
-int rand(int l, int r) {
-  return (int) (rng() % (r + 1 - l)) + l;
-}
-
-///////////////////////////////////////////////////////////////////////////
-//////////////////// DO NOT TOUCH BEFORE THIS LINE ////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-// check the limitation!!!
-const int N = 100010, M = 1010;
-
-
-
-// read the question carefully!!!
-int main() {
-  SOS;
-
-  int n, k;
-  cin >> n >> k;
-  const int D = 10 + 1;
-  const int N = 60 + 5;
-  VI a(n), cnt(N);
-  VE<VI> idx(N);
-  for (int i = 0; i < n; i++) {
-    cin >> a[i];
-    a[i] += D;
-    cnt[a[i]]++;
-    idx[a[i]].EB(i);
-  }
-  int res = 0;
-  debug(a);
-  for (int x = 0; x < N; x++) {
-    int m = SZ(idx[x]);
-    if (m == 0) {
-      continue;
-    }
-    res = max(res, m);
-    int y = x + k;
-    if (x == y) {
-      continue;
-    }
-    if (x == 17) {
-      debug(x, idx[x]);
-      debug(y, idx[y]);
-    }
-    VI s(m, 1);
-    VI sub(m);
-    for (int i = 1; i < m; i++) {
-      int l = idx[x][i - 1], r = idx[x][i];
-      int ll = (int) (LB(ALL(idx[y]), l) - idx[y].begin());
-      int rr = (int) (UB(ALL(idx[y]), r) - idx[y].begin());
-      s[i - 1] -= rr - ll;
-      sub[i - 1] = rr - ll;
-    }
-    int mx = max(res, s[0] + sub[0] + cnt[y]);
-    res = max(res, s[0] + sub[0] + cnt[y]);
-    int mn = min(0, s[0]);
-    for (int i = 1; i < m; i++) {
-      s[i] += s[i - 1];
-      mx = max(mx, cnt[y] + s[i] + sub[i] - mn);
-      res = max(res, cnt[y] + s[i] + sub[i] - mn);
-      mn = min(mn, s[i]);
-      if (x == 17) {
-        debug(i, mn);
-      }
-    }
-    if (x == 17) {
-      debug(s);
-      debug(sub);
-      debug(mx);
-      cout << "------\n";
-    }
-  }
-  cout << res << '\n';
-  return 0;
-}
-
-// GOOD LUCK!!!
