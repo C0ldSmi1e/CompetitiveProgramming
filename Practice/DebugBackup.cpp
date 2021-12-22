@@ -2,6 +2,12 @@ snippet debug
 template <typename A, typename B>
 string to_string(pair<A, B> p);
 
+template <typename... Args>
+string to_string(const std::tuple<Args...> &t);
+
+template <typename ... Ts>
+string to_string(const Ts& ... ts);
+
 string to_string(const string& s) { return '"' + s + '"'; }
 
 string to_string(const char* s) { return to_string((string)s); } 
@@ -39,7 +45,7 @@ string to_string(A v) {
   string res = "{";
   for (const auto &x : v) {
     if (!first) {
-	  res += ", ";
+    res += ", ";
     }
     first = false;
     res += to_string(x);

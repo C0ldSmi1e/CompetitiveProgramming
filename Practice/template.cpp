@@ -17,6 +17,7 @@ using namespace std;
 #define SZ(x) ((int)x.size())
 #define ALL(x) x.begin(), x.end()
 #define RALL(x) x.rbegin(), x.rend()
+#define CNT(x, y) ((int)count(x.begin(),x.end(), y))
 #define SOS ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(10)
 
 typedef long long LL;

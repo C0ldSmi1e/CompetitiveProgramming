@@ -17,11 +17,13 @@ using namespace std;
 #define SZ(x) ((int)x.size())
 #define ALL(x) x.begin(), x.end()
 #define RALL(x) x.rbegin(), x.rend()
+#define CNT(x, y) ((int)count(x.begin(),x.end(), y))
 #define SOS ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(10)
 
 typedef long long LL;
 typedef vector<LL> VL;
 typedef vector<int> VI;
+typedef long double LD;
 typedef vector<bool> VB;
 typedef pair<LL, LL> PLL;
 typedef vector<string> VS;
@@ -32,6 +34,7 @@ typedef pair<double, double> PDD;
 typedef tuple<int, int, int> TIII;
 typedef vector<pair<LL, LL> > VPLL;
 typedef vector<pair<int, int> > VPII;
+typedef vector<tuple<int, int, int> > VTIII;
 
 template <typename A> using VE = vector<A>;
 template <typename A> using USET = unordered_set<A>;
@@ -59,11 +62,10 @@ const int N = 100010, M = 1010;
 
 
 // read the question carefully!!!
-int main()
-{
-    SOS;
+int main() {
+  SOS;
 
-    return 0;
+  return 0;
 }
 
 // GOOD LUCK!!!

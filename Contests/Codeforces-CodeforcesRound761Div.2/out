@@ -1,0 +1,14 @@
+? 1 2 3
+? 4 5 6
+? 2 3 4
+? 3 4 5
+? 5 2 3
+? 1 2 2
+? 3 5 2
+? 5 2 6
+? 4 5 5
+? 6 5 2
+! 2 1 2
+? 1 2 3
+? 4 5 6
+D2.TooManyImpostorshardversion: D2.TooManyImpostorshardversion.cpp:134: int main(): Assertion `xx != -1 && yy != -1' failed.

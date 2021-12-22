@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-15 17:44:16
+**/
+
 // time-limit: 2000
 // problem-url: https://codeforces.com/contest/1591/problem/D
 #include <bits/stdc++.h>
@@ -53,6 +58,117 @@ template <typename A, typename... B> A MIN(const A &a, const B&... b) { return m
 template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(A a, A b) { return *max_element(a, b); }
 template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(A a, A b) { return *min_element(a, b); }
 
+template <typename A, typename B>
+string to_string(pair<A, B> p);
+
+string to_string(const string& s) { return '"' + s + '"'; }
+
+string to_string(const char* s) { return to_string((string)s); } 
+
+string to_string(const char c) { return to_string((string)"" + c); } 
+
+string to_string(bool b) { return (b ? "true" : "false"); }
+
+string to_string(vector<bool> v) {
+  bool first = true;
+  string res = "{";
+  for (int i = 0; i < static_cast<int>(v.size()); i++) {
+    if (!first) {
+      res += ", ";
+    } 
+    first = false;
+    res += to_string(v[i]);
+  }
+  res += "}";
+  return res;
+}
+
+template <size_t N>
+string to_string(bitset<N> v) {
+  string res = "";
+  for (size_t i = 0; i < N; i++) {
+    res += static_cast<char>('0' + v[i]);
+  }
+  return res;
+}
+
+template <typename A>
+string to_string(A v) {
+  bool first = true;
+  string res = "{";
+  for (const auto &x : v) {
+    if (!first) {
+    res += ", ";
+    }
+    first = false;
+    res += to_string(x);
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A> heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A>
+string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
+  bool first = true;
+  string res = "{";
+  while ((int) heap.size()) {
+    if (!first) {
+      res += ", ";
+    }
+    first = false;
+    res += to_string(heap.top());
+    heap.pop();
+  }
+  res += "}";
+  return res;
+}
+
+template <typename A, typename B>
+string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+
+template <typename ... Ts>
+string to_string(const Ts& ... ts) {
+  stringstream ss;
+  const char* sep = "";
+  ((static_cast<void>(ss << sep << ts), sep = ", "), ...);
+  return ss.str();
+}
+
+template <typename... Args>
+string to_string(const std::tuple<Args...> &t) {
+  string res = "(";
+  apply([&](const auto&... ts) { res += to_string(ts...); }, t);
+  res += ")";
+  return res;
+}
+
+void debug_out() { cout << '\n'; }
+
+template <typename Head, typename... Tail>
+void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
+
+#ifdef LOCAL
+#define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)
+#else
+#define debug(...) 42
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 //////////////////// DO NOT TOUCH BEFORE THIS LINE ////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -60,12 +176,62 @@ template <typename A, typename B = typename std::iterator_traits<A>::value_type>
 // check the limitation!!!
 const int N = 100010, M = 1010;
 
-
+// usage:
+//  CountPairs(a, [&](int i, int j) { return i < j; });
+//  Counts the number of pairs i < j such that func(a[i], a[j]) is true.
+template <typename T, typename F = function<bool(const T &, const T &)>>
+long long CountPairs(vector<T> a, const F &func) {
+  int n = static_cast<int>(a.size());
+  vector<T> temp(n);
+  function<long long(int, int)> solve = [&](int l, int r) -> long long {
+    if (l >= r) {
+      return 0;
+    }
+    int mid = (l + r) >> 1;
+    long long res = solve(l, mid) + solve(mid + 1, r);
+    int i = l, j = mid + 1, k = 0;
+    while (i <= mid || j <= r) {
+      if (i <= mid && (j > r || func(a[i], a[j]))) {
+        temp[k++] = a[i++];
+      } else {
+        res += i - l;
+        temp[k++] = a[j++];
+      }
+    }
+    copy(temp.begin(), temp.begin() + k, a.begin() + l);
+    return res;
+  };
+  return solve(0, n - 1);
+}
 
 // read the question carefully!!!
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    VI a(n);
+    for (auto &u : a) {
+      cin >> u;
+    }
+    if (is_sorted(ALL(a))) {
+      cout << "YES\n";
+      continue;
+    }
+    if (n < 3) {
+      cout << "NO\n";
+      continue;
+    }
+    if (SZ(set<int>(ALL(a))) < n) {
+      cout << "YES\n";
+      continue;
+    }
+    LL cnt = CountPairs(a, [&](int i, int j) { return i > j; });
+    cout << (cnt % 2 == 0 ? "YES\n" : "NO\n");
+  }
   return 0;
 }
 

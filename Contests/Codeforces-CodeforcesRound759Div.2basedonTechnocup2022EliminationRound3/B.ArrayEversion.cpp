@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-15 16:54:56
+**/
+
 // time-limit: 1000
 // problem-url: https://codeforces.com/contest/1591/problem/B
 #include <bits/stdc++.h>
@@ -66,6 +71,24 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    VI a(n);
+    for (auto &u : a) {
+      cin >> u;
+    }
+    int res = 0, cur = a.back();
+    for (int i = n - 2; i >= 0; i--) {
+      if (cur < a[i]) {
+        cur = a[i];
+        ++res;
+      }
+    }
+    cout << res << '\n';
+  }
   return 0;
 }
 
