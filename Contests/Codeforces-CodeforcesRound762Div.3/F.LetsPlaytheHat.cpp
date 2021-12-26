@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-24 15:10:04
+**/
+
 // time-limit: 2000
 // problem-url: https://codeforces.com/contest/1619/problem/F
 #include <bits/stdc++.h>
@@ -67,6 +72,44 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  auto print = [&](VE<VI> &a) -> void {
+    for (auto &u : a) {
+      cout << SZ(u);
+      for (auto &v : u) {
+        cout << ' ' << v + 1;
+      }
+      cout << '\n';
+    }
+  };
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, m, k;
+    cin >> n >> m >> k;
+    int x = n / m, y = n / m + 1, r = n % m;
+    int st = 0;
+    while (k--) {
+      VE<VI> res(m);
+      int j = 0, id = st;;
+      for (int i = 0; i < r * y; i++) {
+        res[j].EB(id);
+        if (SZ(res[j]) >= y) {
+          j++;
+        }
+        id = (id + 1) % n;
+      }
+      st = id;
+      for (int i = 0; i < n - r * y; i++) {
+        res[j].EB(id);
+        if (SZ(res[j]) >= x) {
+          j++;
+        }
+        id = (id + 1) % n;
+      }
+      print(res);
+    }
+    cout << '\n';
+  }
   return 0;
 }
 

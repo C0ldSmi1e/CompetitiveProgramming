@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-22 17:44:38
+**/
+
 // time-limit: 1000
 // problem-url: https://codeforces.com/contest/1619/problem/C
 #include <bits/stdc++.h>
@@ -67,6 +72,49 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    string b, s;
+    cin >> b >> s;
+    int n = SZ(b), m = SZ(s);
+    string res;
+    bool flag = true;
+    int j = m - 1;
+    for (int i = n - 1; flag && i >= 0; i--) {
+      if (b[i] <= s[j]) {
+        res += char(s[j] - b[i] + '0');
+        j--;
+      } else {
+        if (j - 1 >= 0) {
+          int x = (int) (b[i] - '0');
+          int y = (int) (s[j - 1] - '0') * 10 + (int) (s[j] - '0');
+          if (y - x < 0 || y - x >= 10) {
+            flag = false;
+            break;
+          }
+          res += char(y - x + '0');
+          j -= 2;
+        } else {
+          flag = false;
+          break;
+        }
+      }
+    }
+    while (j >= 0) {
+      res += s[j];
+      j--;
+    }
+    if (flag) {
+      while (SZ(res) > 1 && res.back() == '0') {
+        res.PB();
+      }
+      reverse(ALL(res));
+      cout << res << '\n';
+    } else {
+      cout << "-1\n";
+    }
+  }
   return 0;
 }
 

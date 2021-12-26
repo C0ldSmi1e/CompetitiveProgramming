@@ -1,5 +1,10 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-23 13:29:52
+**/
+
 // time-limit: 2000
-// problem-url: https://codeforces.com/contest/1619/problem/E
+// problem-url: https://codeforces.com/contest/1619/problem/D
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -59,7 +64,7 @@ template <typename A, typename B = typename std::iterator_traits<A>::value_type>
 ///////////////////////////////////////////////////////////////////////////
 
 // check the limitation!!!
-const int N = 100010, M = 1010;
+const int N = 200010, M = 1010;
 
 
 
@@ -67,6 +72,44 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    VI a(n);
+    VI cnt(N);
+    for (auto &u : a) {
+      cin >> u;
+      cnt[u]++;
+    }
+    HEAP<PII> heap;
+    bool flag = true;
+    LL other = 0;
+    for (int i = 0; i <= n; i++) {
+      if (flag) {
+        cout << cnt[i] + other;
+      } else {
+        cout << "-1";
+      }
+      if (cnt[i] == 0) {
+        if (SZ(heap) > 0) {
+          auto [j, cc] = heap.top();
+          heap.pop();
+          other += i - j;
+          --cc;
+          if (cc > 0) {
+            heap.push(MP(j, cc));
+          }
+        } else {
+          flag = false;
+        }
+      } else if (cnt[i] > 1) {
+        heap.push(MP(i, cnt[i] - 1));
+      }
+      cout << " \n"[i == n];
+    }
+  }
   return 0;
 }
 

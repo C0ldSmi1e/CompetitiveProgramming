@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-22 14:59:18
+**/
+
 // time-limit: 1000
 // problem-url: https://codeforces.com/contest/1619/problem/B
 #include <bits/stdc++.h>
@@ -67,6 +72,28 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    LL n;
+    cin >> n;
+    int res = 0;
+    LL t = 1;
+    set<LL> S;
+    while (t * t <= n) {
+      S.IS(t * t);
+      res++;
+      t++;
+    }
+    t = 1;
+    while (t * t * t <= n) {
+      if (!S.count(t * t * t)) {
+        res++;
+      }
+      t++;
+    }
+    cout << res << '\n';
+  }
   return 0;
 }
 

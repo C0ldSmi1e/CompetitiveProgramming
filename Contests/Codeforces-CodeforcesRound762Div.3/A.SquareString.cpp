@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-22 14:55:24
+**/
+
 // time-limit: 1000
 // problem-url: https://codeforces.com/contest/1619/problem/A
 #include <bits/stdc++.h>
@@ -67,6 +72,22 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    string s;
+    cin >> s;
+    int n = SZ(s);
+    if (n & 1) {
+      cout << "NO\n";
+      continue;
+    }
+    bool flag = true;
+    for (int i = 0, j = n / 2; j < n; i++, j++) {
+      flag &= (s[i] == s[j]);
+    }
+    cout << (flag ? "YES\n" : "NO\n");
+  }
   return 0;
 }
 

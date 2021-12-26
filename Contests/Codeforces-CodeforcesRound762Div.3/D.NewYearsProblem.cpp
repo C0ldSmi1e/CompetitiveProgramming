@@ -1,5 +1,8 @@
-// time-limit: 2000
-// problem-url: https://codeforces.com/contest/1619/problem/D
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-23 14:56:36
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -67,6 +70,45 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, m;
+    cin >> m >> n;
+    VE<VI> a(n, VI(m));
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        cin >> a[j][i];
+      }
+    }
+    int l = 1, r = (int) 2e9;
+    for (int i = 0; i < n; i++) {
+      r = min(r, MAX(ALL(a[i])));
+    }
+    auto check = [&](int x) -> bool {
+      VB ok(m);
+      for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+          if (a[i][j] >= x) {
+            if (ok[j]) {
+              return true;
+            }
+            ok[j] = true;
+          }
+        }
+      }
+      return false;
+    };
+    while (l < r) {
+      int mid = (l + r + 1) >> 1;
+      if (check(mid)) {
+        l = mid;
+      } else {
+        r = mid - 1;
+      }
+    }
+    cout << r << '\n';
+  }
   return 0;
 }
 
