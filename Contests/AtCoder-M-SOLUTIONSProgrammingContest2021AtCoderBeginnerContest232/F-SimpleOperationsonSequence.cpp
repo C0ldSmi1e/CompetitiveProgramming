@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-30 14:02:20
+**/
+
 // time-limit: 2000
 // problem-url: https://atcoder.jp/contests/abc232/tasks/abc232_f
 #include <bits/stdc++.h>
@@ -67,6 +72,37 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int n;
+  LL x, y;
+  cin >> n >> x >> y;
+  VL a(n);
+  for (auto &u : a) {
+    cin >> u;
+  }
+  VL b(n);
+  for (auto &u : b) {
+    cin >> u;
+  }
+  const LL INF = (LL) 4e18;
+  VL f(1 << n, INF);
+  f[0] = 0;
+  auto GetInv = [&](int state, int x) -> int {
+    int res = 0;
+    for (int bit = 0; bit < n; bit++) {
+      res += (int) (((state >> bit) & 1) && bit > x);
+    }
+    return res;
+  };
+  for (int cur = 0; cur < 1 << n; cur++) {
+    int j = __builtin_popcount(cur);
+    for (int bit = 0; bit < n; bit++) {
+      if (!((cur >> bit) & 1)) {
+        int nxt = (cur | (1 << bit));
+        f[nxt] = min(f[nxt], f[cur] + GetInv(cur, bit) * y + abs(a[bit] - b[j]) * x);
+      }
+    }
+  }
+  cout << f.back() << '\n';
   return 0;
 }
 

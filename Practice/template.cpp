@@ -17,13 +17,13 @@ using namespace std;
 #define SZ(x) ((int)x.size())
 #define ALL(x) x.begin(), x.end()
 #define RALL(x) x.rbegin(), x.rend()
-#define CNT(x, y) ((int)count(x.begin(),x.end(), y))
-#define SOS ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(10)
+#define SOS(x) ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(x)
 
 typedef long long LL;
 typedef vector<LL> VL;
 typedef vector<int> VI;
 typedef long double LD;
+typedef vector<char> VC;
 typedef vector<bool> VB;
 typedef pair<LL, LL> PLL;
 typedef vector<string> VS;
@@ -41,16 +41,18 @@ template <typename A> using USET = unordered_set<A>;
 template <typename A> using HEAP = priority_queue<A>;
 template <typename A, typename B> using PA = pair<A, B>;
 template <typename A, typename B> using UMAP = unordered_map<A, B>;
-template <typename A> using RHEAP = priority_queue<A, vector<A>, greater<A> >;
+template <typename A> using RHEAP = priority_queue<A, vector<A>, greater<A>>;
 
 template <typename A> A MAX(const A &a) { return a; }
 template <typename A> A MIN(const A &a) { return a; }
 template <typename A> A MAX(const A *a, const A *b) { return *max_element(a, b); }
 template <typename A> A MIN(const A *a, const A *b) { return *min_element(a, b); }
+template <typename A> int CNT(const A *a, const A *b, const A &v) { return int(count(a, b, v)); }
 template <typename A, typename... B> A MAX(const A &a, const B&... b) { return max(a, MAX(b...)); }
 template <typename A, typename... B> A MIN(const A &a, const B&... b) { return min(a, MIN(b...)); }
-template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(A a, A b) { return *max_element(a, b); }
-template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(A a, A b) { return *min_element(a, b); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(const A &a, const A &b) { return *max_element(a, b); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(const A &a, const A &b) { return *min_element(a, b); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> int CNT(const A &a, const A &b, const B &v) { return int(count(a, b, v)); }
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////// DO NOT TOUCH BEFORE THIS LINE ////////////////////////
@@ -63,7 +65,7 @@ const int N = 100010, M = 1010;
 
 // read the question carefully!!!
 int main() {
-  SOS;
+  SOS(10);
 
   return 0;
 }

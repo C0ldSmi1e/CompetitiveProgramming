@@ -1,10 +1,8 @@
 /**
  * Author: Daniel
- * Created Time: 2021-12-25 20:48:18
+ * Created Time: 2021-12-27 11:53:13
 **/
 
-// time-limit: 2000
-// problem-url: https://atcoder.jp/contests/abc233/tasks/abc233_f
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -177,7 +175,33 @@ void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...)
 // check the limitation!!!
 const int N = 100010, M = 1010;
 
-
+class Dsu {
+ public:
+  vector<int> p, sz;
+  int n;
+  Dsu(int _n) {
+    n = _n + 1;
+    p.resize(n);
+    sz.assign(n, 1);
+    iota(p.begin(), p.end(), 0);
+  }
+  inline int get(int x) {
+    return (x == p[x] ? x : (p[x] = get(p[x])));
+  }
+  inline bool unite(int x, int y) {
+    x = get(x);
+    y = get(y);
+    if (x != y) {
+      p[x] = y;
+      sz[y] += sz[x];
+      return true;
+    }
+    return false;
+  }
+  inline int getSize(int x) {
+    return sz[get(x)];
+  }
+};
 
 // read the question carefully!!!
 int main() {
@@ -185,87 +209,71 @@ int main() {
 
   int n;
   cin >> n;
-  VI p(n), pos(n);
+  VI p(n);
   for (int i = 0; i < n; i++) {
     cin >> p[i];
     --p[i];
-    pos[p[i]] = i;
   }
   int m;
   cin >> m;
-  VPII op(m);
+  Dsu d(n);
   VE<VPII> g(n);
   VI deg(n);
+  VI a(m), b(m);
   for (int i = 0; i < m; i++) {
-    int a, b;
-    cin >> a >> b;
-    a--, b--;
-    op[i] = MP(a, b);
-    g[a].EB(b, i);
-    g[b].EB(a, i);
-    deg[a]++, deg[b]++;
+    cin >> a[i] >> b[i];
+    --a[i];
+    --b[i];
+    if (d.get(a[i]) != d.get(b[i])) {
+      d.unite(a[i], b[i]);
+      g[a[i]].EB(b[i], i);
+      g[b[i]].EB(a[i], i);
+      ++deg[a[i]];
+      ++deg[b[i]];
+    }
   }
-  VI res;
-  auto go = [&](int x, int y) -> bool {
-    // value in x should go to y
-    VI dist(n, -1);
-    VPII pre(n, MP(-1, -1));
-    dist[x] = 0;
-    VI q{x};
-    for (int qq = 0; qq < SZ(q); qq++) {
-      int u = q[qq];
-      for (auto &[v, id] : g[u]) {
-        if (dist[v] == -1) {
-          dist[v] = dist[u];
-          pre[v] = MP(u, id);
-          q.EB(v);
-        }
-      }
-    }
-    if (dist[y] == -1) {
-      return false;
-    }
-    VI path;
-    int cur = y;
-    while (pre[cur].F != -1) {
-      path.EB(pre[cur].S);
-      cur = pre[cur].F;
-    }
-    reverse(ALL(path));
-    for (auto &u : path) {
-      auto [x, y] = op[u];
-      swap(pos[p[x]], pos[p[y]]);
-      swap(p[x], p[y]);
-      res.EB(u);
-    }
-    return true;
-  };
-  for (int it = 0; it <= n; it++) {
-    bool ok = true;
-    for (int i = 0; i < n; i++) {
-      ok &= (i == p[i]);
-    }
-    if (ok) {
-      break;
-    }
-    int k = -1;
-    for (int i = 0; i < n; i++) {
-      if (i != p[i]) {
-        if (k == -1 || deg[i] == 1) {
-          k = i;
-        }
-      }
-    }
-    assert(k != -1);
-    debug(p);
-    debug(pos);
-    debug(pos[k], k);
-    if (!go(pos[k], k)) {
+  for (int i = 0; i < n; i++) {
+    if (d.get(i) != d.get(p[i])) {
       cout << "-1\n";
       return 0;
     }
-    debug(p);
-    debug(pos);
+  }
+  VI leaves;
+  for (int i = 0; i < n; i++) {
+    if (deg[i] == 1) {
+      leaves.EB(i);
+    }
+  }
+  VI res;
+  for (int i = 0; i < SZ(leaves); i++) {
+    int leaf = leaves[i];
+    VI path;
+    function<bool(int, int, int)> dfs = [&](int u, int fa, int target) -> bool {
+      if (p[u] == target) {
+        return true;
+      }
+      for (auto &[v, id] : g[u]) {
+        if (v != fa) {
+          path.EB(id);
+          if (dfs(v, u, target)) {
+            return true;
+          }
+          path.PB();
+        }
+      }
+      return false;
+    };
+    dfs(leaf, -1, leaf);
+    reverse(ALL(path));
+    for (auto &u : path) {
+      swap(p[a[u]], p[b[u]]);
+      res.EB(u);
+    }
+    for (auto &[u, id] : g[leaf]) {
+      if (--deg[u] == 1) {
+        leaves.EB(u);
+      }
+    }
   }
   assert(SZ(res) <= (int) 5e5);
   cout << SZ(res) << '\n';

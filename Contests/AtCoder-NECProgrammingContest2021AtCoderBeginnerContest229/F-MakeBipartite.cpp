@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2021-12-31 18:14:09
+**/
+
 // time-limit: 2000
 // problem-url: https://atcoder.jp/contests/abc229/tasks/abc229_f
 #include <bits/stdc++.h>
@@ -64,6 +69,38 @@ const int N = 100010, M = 1010;
 int main() {
   SOS;
 
+  int n;
+  cin >> n;
+  VI a(n);
+  for (auto &u : a) {
+    cin >> u;
+  }
+  VI b(n);
+  for (auto &u : b) {
+    cin >> u;
+  }
+  const LL INF = (LL) 4e18;
+  VE<VE<VL>> f(n, VE<VL>(2, VL(2, INF)));
+  // v0 is white
+  // 0 is white, 1 is black
+  f[0][0][0] = a[0];
+  f[0][1][1] = 0;
+  for (int i = 1; i < n; i++) {
+    for (int j = 0; j < 2; j++) {
+      for (int k = 0; k < 2; k++) {
+        for (int l = 0; l < 2; l++) {
+          f[i][j][k] = min(f[i][j][k], f[i - 1][l][k] + (j == l ? b[i - 1] : 0) + (j == 0 ? a[i] : 0));
+        }
+      }
+    }
+  }
+  LL res = INF;
+  for (int j = 0; j < 2; j++) {
+    for (int k = 0; k < 2; k++) {
+      res = min(res, f[n - 1][j][k] + (j == k ? b[n - 1] : 0));
+    }
+  }
+  cout << res << '\n';
   return 0;
 }
 
