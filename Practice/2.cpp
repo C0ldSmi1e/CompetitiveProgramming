@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2022-01-09 15:33:24
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -59,12 +64,79 @@ template <typename A, typename B = typename std::iterator_traits<A>::value_type>
 // check the limitation!!!
 const int N = 100010, M = 1010;
 
+template <typename T>
+class Fenwick {
+ public:
+  vector<T> fenw;
+  int n;
+  Fenwick(int _n) : n(_n) {
+    fenw.resize(n);
+  }
+  inline void add(int x, T v) {
+    assert(x >= 0 && x < n);
+    while (x < n) {
+      fenw[x] += v;
+      x |= (x + 1);
+    }
+  }
+  inline T get(int x) {
+    T res{};
+    while (x >= 0) {
+      res += fenw[x];
+      x = (x & (x + 1)) - 1;
+    }
+    return res;
+  }
+  inline T get(int l, int r) {
+    assert(l >= 0 && l < n && r >= 0 && r < n);
+    T res = get(r);
+    if (l - 1 >= 0) {
+      res -= get(l - 1);
+    }
+    return res;
+  }
+  inline int kthMin(int k) {
+    // kthMax = n - kthMin + 1
+    assert(k >= 1 && k <= n);
+    int cnt = 0, x = 0;
+    for (int i = (int) log2(n); i >= 0; i--) {
+      x += (1 << i);
+      if (x >= n || cnt + fenw[x - 1] >= k) {
+        x -= (1 << i);
+      } else {
+        cnt += fenw[x - 1];
+      }
+    }
+    return x;
+  }
+};
 
+// struct Node {
+//   int a = ...; // don't forget to set default value
+//   inline void operator += (Node &other) {
+//     ...
+//   }
+// };
 
 // read the question carefully!!!
 int main() {
   SOS;
 
+  int n, k;
+  cin >> n >> k;
+  VI p(n);
+  for (auto &u : p) {
+    cin >> u;
+    u--;
+  }
+  Fenwick<int> fen(n);
+  for (int i = 0; i < k - 1; i++) {
+    fen.add(p[i], 1);
+  }
+  for (int i = k - 1; i < n; i++) {
+    fen.add(p[i], 1);
+    cout << fen.kth(i + 2 - k) + 1 << '\n';
+  }
   return 0;
 }
 

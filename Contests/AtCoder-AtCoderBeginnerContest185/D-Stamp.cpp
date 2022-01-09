@@ -1,9 +1,8 @@
 /**
  * Author: Daniel
- * Created Time: 2020-12-13 20:58:56
+ * Created Time: 2022-01-07 14:26:10
 **/
 
-// time-limit: 2000
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -14,155 +13,89 @@ using namespace std;
 #define IS insert
 #define PI acos(-1)
 #define PB pop_back
+#define MP make_pair
+#define MT make_tuple
+#define LB lower_bound
+#define UB upper_bound
 #define EB emplace_back
 #define lowbit(x) (x & -x)
 #define SZ(x) ((int)x.size())
-#define MP(x, y) make_pair(x, y)
 #define ALL(x) x.begin(), x.end()
 #define RALL(x) x.rbegin(), x.rend()
-#define SOS; ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(10);
+#define SOS(x) ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);cout<<fixed<<setprecision(x)
 
 typedef long long LL;
+typedef vector<LL> VL;
 typedef vector<int> VI;
+typedef long double LD;
+typedef vector<char> VC;
+typedef vector<bool> VB;
+typedef pair<LL, LL> PLL;
+typedef vector<string> VS;
+typedef vector<double> VD;
 typedef pair<int, int> PII;
 typedef unsigned long long ULL;
+typedef pair<double, double> PDD;
+typedef tuple<int, int, int> TIII;
+typedef vector<pair<LL, LL> > VPLL;
+typedef vector<pair<int, int> > VPII;
+typedef vector<tuple<int, int, int> > VTIII;
 
 template <typename A> using VE = vector<A>;
 template <typename A> using USET = unordered_set<A>;
 template <typename A> using HEAP = priority_queue<A>;
 template <typename A, typename B> using PA = pair<A, B>;
 template <typename A, typename B> using UMAP = unordered_map<A, B>;
-template <typename A> using RHEAP = priority_queue<A, vector<A>, greater<A> >;
+template <typename A> using RHEAP = priority_queue<A, vector<A>, greater<A>>;
 
-template <typename A, typename B>
-string to_string(pair<A, B> p);
-
-template <typename A, typename B, typename C>
-string to_string(tuple<A, B, C> p);
-
-template <typename A, typename B, typename C, typename D>
-string to_string(tuple<A, B, C, D> p);
-
-string to_string(const string& s) { return '"' + s + '"'; }
-
-string to_string(const char* s) { return to_string((string)s); } 
-
-string to_string(const char c) { return to_string((string)"" + c); } 
-
-string to_string(bool b) { return (b ? "true" : "false"); }
-
-string to_string(vector<bool> v) 
-{
-    bool first = true;
-    string res = "{";
-    for (int i = 0; i < static_cast<int>(v.size()); i++) 
-    {
-        if (!first) res += ", ";
-        first = false;
-        res += to_string(v[i]);
-    }
-    res += "}";
-    return res;
-}
-
-template <size_t N>
-string to_string(bitset<N> v)
-{
-    string res = "";
-    for (size_t i = 0; i < N; i++) res += static_cast<char>('0' + v[i]);
-    return res;
-}
-
-template <typename A>
-string to_string(A v)
-{
-    bool first = true;
-    string res = "{";
-    for (const auto &x : v)
-    {
-        if (!first) res += ", ";
-        first = false;
-        res += to_string(x);
-    }
-    res += "}";
-    return res;
-}
-
-template <typename A, typename B>
-string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
-
-template <typename A, typename B, typename C>
-string to_string(tuple<A, B, C> p) { return "(" + to_string(get<0>(p)) + ", " + to_string(get<1>(p)) + ", " + to_string(get<2>(p)) + ")"; }
-
-template <typename A, typename B, typename C, typename D>
-string to_string(tuple<A, B, C, D> p) { return "(" + to_string(get<0>(p)) + ", " + to_string(get<1>(p)) + ", " + to_string(get<2>(p)) + ", " + to_string(get<3>(p)) + ")"; }
-
-void debug_out() { cout << '\n'; }
-
-template <typename Head, typename... Tail>
-void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
-
-#ifdef LOCAL
-#define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)
-#else
-#define debug(...) 42
-#endif
+template <typename A> A MAX(const A &a) { return a; }
+template <typename A> A MIN(const A &a) { return a; }
+template <typename A> A MAX(const A *a, const A *b) { return *max_element(a, b); }
+template <typename A> A MIN(const A *a, const A *b) { return *min_element(a, b); }
+template <typename A> int CNT(const A *a, const A *b, const A &v) { return int(count(a, b, v)); }
+template <typename A, typename... B> A MAX(const A &a, const B&... b) { return max(a, MAX(b...)); }
+template <typename A, typename... B> A MIN(const A &a, const B&... b) { return min(a, MIN(b...)); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MAX(const A &a, const A &b) { return *max_element(a, b); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> B MIN(const A &a, const A &b) { return *min_element(a, b); }
+template <typename A, typename B = typename std::iterator_traits<A>::value_type> int CNT(const A &a, const A &b, const B &v) { return int(count(a, b, v)); }
 
 ///////////////////////////////////////////////////////////////////////////
 //////////////////// DO NOT TOUCH BEFORE THIS LINE ////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 // check the limitation!!!
-const int N = 200010, M = 1010;
+const int N = 100010, M = 1010;
 
-int n, m;
-int a[N];
+
 
 // read the question carefully!!!
-int main()
-{
-    SOS;
+int main() {
+  SOS(10);
 
-    cin >> n >> m;
-    for (int i = 1; i <= m; i ++ ) cin >> a[i];
-    sort(a + 1, a + 1 + m);
-
-    if (!m)
-    {
-        cout << "1\n";
-        return 0;
+  int m, n;
+  cin >> m >> n;
+  VI a(n);
+  for (auto &u : a) {
+    cin >> u;
+  }
+  a.EB(0);
+  a.EB(m + 1);
+  sort(ALL(a));
+  int mn = m;
+  for (int i = 0; i < n + 1; i++) {
+    if (a[i + 1] - a[i] - 1 > 0) {
+      mn = min(mn, a[i + 1] - a[i] - 1);
     }
-
-    int cur = a[1];
-    int len = 0x3f3f3f3f;
-    for (int i = 2; i <= m; i ++ )
-    {
-        int seq = a[i] - cur - 1;
-        cur = a[i];
-        if (!seq) continue;
-        len = min(len, seq);
+  }
+  int res = 0;
+  for (int i = 0; i < n + 1; i++) {
+    int d = a[i + 1] - a[i] - 1;
+    if (d > 0) {
+      res += (d + mn - 1) / mn;
     }
-    if (a[1] != 1) len = min(len, a[1] - 1);
-    if (a[m] != n) len = min(len, n - a[m]);
-
-    if (len == 0x3f3f3f3f)
-    {
-        cout << "0\n";
-        return 0;
-    }
-
-    cur = a[1];
-    LL res = 0; 
-    for (int i = 2; i <= m; i ++ )
-    {
-        int seq = a[i] - cur - 1;
-        cur = a[i];
-        res += (seq + len - 1) / len;
-    }
-    res += (a[1] - 1 + len - 1) / len;
-    res += (n - a[m] + len - 1) / len;
-    cout << res << '\n';
-    return 0;
+  }
+  cout << res << '\n';
+  return 0;
 }
 
 // GOOD LUCK!!!

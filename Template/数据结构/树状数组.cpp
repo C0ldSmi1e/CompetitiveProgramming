@@ -462,7 +462,6 @@ class Fenwick {
   Fenwick(int _n) : n(_n) {
     fenw.resize(n);
   }
-  // change value at x to v
   inline void add(int x, T v) {
     assert(x >= 0 && x < n);
     while (x < n) {
@@ -478,7 +477,6 @@ class Fenwick {
     }
     return res;
   }
-  // ask for [l, r]
   inline T get(int l, int r) {
     assert(l >= 0 && l < n && r >= 0 && r < n);
     T res = get(r);
@@ -487,10 +485,25 @@ class Fenwick {
     }
     return res;
   }
+  inline int kthMin(int k) {
+    // kthMax = n - kthMin + 1
+    assert(k >= 1 && k <= n);
+    int cnt = 0, x = 0;
+    for (int i = (int) log2(n); i >= 0; i--) {
+      x += (1 << i);
+      if (x >= n || cnt + fenw[x - 1] >= k) {
+        x -= (1 << i);
+      } else {
+        cnt += fenw[x - 1];
+      }
+    }
+    return x;
+  }
 };
-// struct node {
+
+// struct Node {
 //   int a = ...; // don't forget to set default value
-//   inline void operator += (node &other) {
+//   inline void operator += (Node &other) {
 //     ...
 //   }
 // };
@@ -604,9 +617,10 @@ class Fenwick {
     return res;
   }
 };
-// struct node {
+
+// struct Node {
 //   int a = ...; // don't forget to set default value
-//   inline void operator += (node &other) {
+//   inline void operator += (Node &other) {
 //     ...
 //   }
 // };

@@ -376,6 +376,7 @@ int main() {
   for (int i = 1; i < n; ++i) {
     Mint cnt = qp(Mint(2), i - 1);
     int d = (int) (s[i] - '0');
+    //debug(cnt, d);
     f[i + 1] = cnt * d + f[i];
     f[i + 1] += g[i] * 10 + cnt * d;
     if (i - 1 >= 0) f[i + 1] += pre[i - 1];

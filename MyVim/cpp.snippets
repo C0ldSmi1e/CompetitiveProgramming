@@ -353,7 +353,7 @@ snippet rmq
 //   Rmq<int, decltype(fun)> rmq(a, fun);
 // or:
 //   Rmq<int> rmq(a, [&](int i, int j) { return min(i, j); });
-template <typename T, class F = function<T(const T&, const T&)>>
+template <typename T, typename F = function<T(const T&, const T&)>>
 class Rmq {
  public:
   int n;
@@ -551,10 +551,25 @@ class Fenwick {
     }
     return res;
   }
+  inline int kthMin(int k) {
+    // kthMax = n - kthMin + 1
+    assert(k >= 1 && k <= n);
+    int cnt = 0, x = 0;
+    for (int i = (int) log2(n); i >= 0; i--) {
+      x += (1 << i);
+      if (x >= n || cnt + fenw[x - 1] >= k) {
+        x -= (1 << i);
+      } else {
+        cnt += fenw[x - 1];
+      }
+    }
+    return x;
+  }
 };
-// struct node {
+
+// struct Node {
 //   int a = ...; // don't forget to set default value
-//   inline void operator += (node &other) {
+//   inline void operator += (Node &other) {
 //     ...
 //   }
 // };
@@ -866,5 +881,35 @@ vector<int> BuildLcp(int n, const T &s, const vector<int> &sa) {
 template <typename T>
 vector<int> BuildLcp(const T &s, const vector<int> &sa) {
   return BuildLcp((int) s.size(), s, sa);
+}
+endsnippet
+
+snippet countpairs
+// usage:
+//  CountPairs(a, [&](int i, int j) { return i < j; });
+//  Counts the number of pairs i < j such that func(a[i], a[j]) is true.
+template <typename T, typename F = function<bool(const T &, const T &)>>
+long long CountPairs(vector<T> a, const F &func) {
+  int n = static_cast<int>(a.size());
+  vector<T> temp(n);
+  function<long long(int, int)> solve = [&](int l, int r) -> long long {
+    if (l >= r) {
+      return 0;
+    }
+    int mid = (l + r) >> 1;
+    long long res = solve(l, mid) + solve(mid + 1, r);
+    int i = l, j = mid + 1, k = 0;
+    while (i <= mid || j <= r) {
+      if (i <= mid && (j > r || func(a[i], a[j]))) {
+        temp[k++] = a[i++];
+      } else {
+        res += i - l;
+        temp[k++] = a[j++];
+      }
+    }
+    copy(temp.begin(), temp.begin() + k, a.begin() + l);
+    return res;
+  };
+  return solve(0, n - 1);
 }
 endsnippet
