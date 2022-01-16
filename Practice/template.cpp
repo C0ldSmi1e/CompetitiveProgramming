@@ -32,9 +32,9 @@ typedef pair<int, int> PII;
 typedef unsigned long long ULL;
 typedef pair<double, double> PDD;
 typedef tuple<int, int, int> TIII;
-typedef vector<pair<LL, LL> > VPLL;
-typedef vector<pair<int, int> > VPII;
-typedef vector<tuple<int, int, int> > VTIII;
+typedef vector<pair<LL, LL>> VPLL;
+typedef vector<pair<int, int>> VPII;
+typedef vector<tuple<int, int, int>> VTIII;
 
 template <typename A> using VE = vector<A>;
 template <typename A> using USET = unordered_set<A>;

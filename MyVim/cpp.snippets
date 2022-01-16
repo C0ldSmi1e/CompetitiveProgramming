@@ -388,9 +388,9 @@ class Lca {
   int n, root, lg;
   vector<A> dist;
   vector<int> depth;
-  vector<vector<int> > fa;
+  vector<vector<int>> fa;
 
-  Lca(const vector<vector<pair<int, B> > > &g, int root) {
+  Lca(const vector<vector<pair<int, B>>> &g, int root) {
     n = static_cast<int>(g.size());
     lg = 32 - __builtin_clz(n);
     fa.resize(n);
@@ -420,7 +420,7 @@ class Lca {
     }
   }
   int getLca(int a, int b) const {
-	assert(a >= 0 && a < n && b >= 0 && b < n);
+	  assert(a >= 0 && a < n && b >= 0 && b < n);
     if (depth[a] < depth[b]) {
       swap(a, b);
     }
@@ -441,7 +441,7 @@ class Lca {
     return fa[a][0];
   }
   A getDist(int a, int b) const {
-	assert(a >= 0 && a < n && b >= 0 && b < n);
+	  assert(a >= 0 && a < n && b >= 0 && b < n);
     int anc = getLca(a, b);
     return dist[a] + dist[b] - 2 * dist[anc];
   }
