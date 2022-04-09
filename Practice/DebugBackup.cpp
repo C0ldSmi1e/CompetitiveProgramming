@@ -2,19 +2,21 @@ snippet debug
 template <typename A, typename B>
 string to_string(pair<A, B> p);
 
-template <typename... Args>
+template <typename ...Args>
 string to_string(const std::tuple<Args...> &t);
 
-template <typename ... Ts>
-string to_string(const Ts& ... ts);
+template <typename ...Ts>
+string to_string(const Ts &...ts);
 
-string to_string(const string& s) { return '"' + s + '"'; }
+string to_string(const string &s) { return '"' + s + '"'; }
 
-string to_string(const char* s) { return to_string((string)s); } 
+string to_string(const char *s) { return to_string((string) s); } 
 
-string to_string(const char c) { return to_string((string)"" + c); } 
+string to_string(const char c) { return to_string((string) "" + c); } 
 
 string to_string(bool b) { return (b ? "true" : "false"); }
+
+string to_string(_Bit_reference b) { return (b ? "true" : "flase"); }
 
 string to_string(vector<bool> v) {
   bool first = true;
@@ -71,7 +73,7 @@ string to_string(priority_queue<A> heap) {
 }
 
 template <typename A>
-string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
+string to_string(priority_queue<A, vector<A>, greater<A>> heap) {
   bool first = true;
   string res = "{";
   while ((int) heap.size()) {
@@ -89,26 +91,26 @@ string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
 template <typename A, typename B>
 string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
 
-template <typename ... Ts>
-string to_string(const Ts& ... ts) {
+template <typename ...Ts>
+string to_string(const Ts &...ts) {
   stringstream ss;
   const char* sep = "";
   ((static_cast<void>(ss << sep << ts), sep = ", "), ...);
   return ss.str();
 }
 
-template <typename... Args>
+template <typename ...Args>
 string to_string(const std::tuple<Args...> &t) {
   string res = "(";
-  apply([&](const auto&... ts) { res += to_string(ts...); }, t);
+  apply([&](const auto &...ts) { res += to_string(ts...); }, t);
   res += ")";
   return res;
 }
 
 void debug_out() { cout << '\n'; }
 
-template <typename Head, typename... Tail>
-void debug_out(Head H, Tail... T) { cout << " " << to_string(H); debug_out(T...); }
+template <typename Head, typename ...Tail>
+void debug_out(Head H, Tail ...T) { cout << " " << to_string(H); debug_out(T...); }
 
 #ifdef LOCAL
 #define debug(...) cout << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__)

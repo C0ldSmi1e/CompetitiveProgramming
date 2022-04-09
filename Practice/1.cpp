@@ -1,3 +1,8 @@
+/**
+ * Author: Daniel
+ * Created Time: 2022-04-09 13:35:13
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -67,6 +72,25 @@ const int N = 100010, M = 1010;
 int main() {
   SOS(10);
 
+  VE<VI> a = {
+    {1, 3, 5, 7, 8, 10, 12},
+    {4, 6, 9, 11},
+    {2}
+  };
+  int x, y;
+  cin >> x >> y;
+  int xx = -1, yy = -1;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < SZ(a[i]); j++) {
+      if (a[i][j] == x) {
+        xx = i;
+      }
+      if (a[i][j] == y) {
+        yy = i;
+      }
+    }
+  }
+  cout << (xx == yy ? "Yes\n" : "No\n");
   return 0;
 }
 
