@@ -37,7 +37,7 @@ template <typename T>
 string to_string(T v) {
   bool first = true;
   string res = "{";
-  for (const auto &x : v) {
+  for (const auto& x : v) {
     if (!first) {
 	  res += ", ";
     }
@@ -65,7 +65,7 @@ string to_string(priority_queue<T> heap) {
 }
 
 template <typename T>
-string to_string(priority_queue<T, vector<T>, greater<T> > heap) {
+string to_string(priority_queue<T, vector<T>, greater<T>> heap) {
   bool first = true;
   string res = "{";
   while ((int) heap.size()) {
@@ -92,7 +92,7 @@ string to_string(const Ts& ... ts) {
 }
 
 template <typename... Args>
-string to_string(const std::tuple<Args...> &t) {
+string to_string(const std::tuple<Args...>& t) {
   string res = "(";
   apply([&](const auto&... ts) { res += to_string(ts...); }, t);
   res += ")";
@@ -113,7 +113,7 @@ endsnippet
 
 snippet modint
 template <typename T>
-T inverse(T a, T m) {
+T Inverse(T a, T m) {
   T u = 0, v = 1;
   while (a != 0) {
     T t = m / a;
@@ -187,7 +187,7 @@ class Modular {
     return *this;
   }
 
-  Modular& operator/=(const Modular& other) { return *this *= Modular(inverse(other.value, mod())); }
+  Modular& operator/=(const Modular& other) { return *this *= Modular(Inverse(other.value, mod())); }
 
   friend const Type& abs(const Modular& x) { return x.value; }
 
@@ -332,8 +332,8 @@ class Dsu {
     return (x == p[x] ? x : (p[x] = Get(p[x])));
   }
   inline bool Unite(int x, int y) {
-    x = get(x);
-    y = get(y);
+    x = Get(x);
+    y = Get(y);
     if (x != y) {
       p[x] = y;
       sz[y] += sz[x];
@@ -342,15 +342,15 @@ class Dsu {
     return false;
   }
   inline int GetSize(int x) {
-    return sz[get(x)];
+    return sz[Get(x)];
   }
 };
 endsnippet
 
 snippet rmq
 // usage:
-//   auto fun = [&](int i, int j) { return min(i, j); };
-//   Rmq<int, decltype(fun)> rmq(a, fun);
+//   auto Fun = [&](int i, int j) { return min(i, j); };
+//   Rmq<int, decltype(Fun)> rmq(a, Fun);
 // or:
 //   Rmq<int> rmq(a, [&](int i, int j) { return min(i, j); });
 template <typename T, typename F = function<T(const T&, const T&)>>
@@ -358,9 +358,9 @@ class Rmq {
  public:
   int n;
   vector<vector<T>> mat;
-  F func;
+  F Func;
 
-  Rmq(const vector<T>& a, const F& f) : func(f) {
+  Rmq(const vector<T>& a, const F& f) : Func(f) {
     n = static_cast<int>(a.size());
     int max_log = 32 - __builtin_clz(n);
     mat.resize(max_log);
@@ -368,7 +368,7 @@ class Rmq {
     for (int j = 1; j < max_log; j++) {
       mat[j].resize(n - (1 << j) + 1);
       for (int i = 0; i <= n - (1 << j); i++) {
-        mat[j][i] = func(mat[j - 1][i], mat[j - 1][i + (1 << (j - 1))]);
+        mat[j][i] = Func(mat[j - 1][i], mat[j - 1][i + (1 << (j - 1))]);
       }
     }
   }
@@ -376,7 +376,7 @@ class Rmq {
   T Get(int from, int to) const {
     assert(0 <= from && from <= to && to <= n - 1);
     int lg = 32 - __builtin_clz(to - from + 1) - 1;
-    return func(mat[lg][from], mat[lg][to - (1 << lg) + 1]);
+    return Func(mat[lg][from], mat[lg][to - (1 << lg) + 1]);
   }
 };
 endsnippet
@@ -390,7 +390,7 @@ class Lca {
   vector<int> depth;
   vector<vector<int>> fa;
 
-  Lca(const vector<vector<pair<int, U>>> &g, int root) {
+  Lca(const vector<vector<pair<int, U>>>& g, int root) {
     n = static_cast<int>(g.size());
     lg = 32 - __builtin_clz(n);
     fa.resize(n);
@@ -408,7 +408,7 @@ class Lca {
       for (int i = 1; i < lg; i++) {
         fa[u][i] = fa[fa[u][i - 1]][i - 1];
       }
-      for (auto &[v, w] : g[u]) {
+      for (auto& [v, w] : g[u]) {
         if (v == fa[u][0]) {
           continue;
         }
@@ -419,7 +419,7 @@ class Lca {
       }
     }
   }
-  int getLca(int a, int b) const {
+  int GetLca(int a, int b) const {
 	  assert(a >= 0 && a < n && b >= 0 && b < n);
     if (depth[a] < depth[b]) {
       swap(a, b);
@@ -440,15 +440,15 @@ class Lca {
     }
     return fa[a][0];
   }
-  T getDist(int a, int b) const {
+  T GetDist(int a, int b) const {
 	  assert(a >= 0 && a < n && b >= 0 && b < n);
-    int anc = getLca(a, b);
+    int anc = GetLca(a, b);
     return dist[a] + dist[b] - 2 * dist[anc];
   }
 };
 endsnippet
 
-snippet Dijkstra
+snippet dijkstra
 template <typename T, typename U>
 vector<T> Dijkstra(const vector<vector<pair<int, U>>>& g, int start, const T INF) {
   int n = static_cast<int>(g.size());
@@ -492,7 +492,7 @@ class StringHash {
   unsigned long long seed, mod;
   vector<unsigned long long> p, h;
  
-  StringHash(const string &s, unsigned long long _seed = 13331, unsigned long long _mod = 998244353) : seed(_seed), mod(_mod) {
+  StringHash(const string& s, unsigned long long _seed = 13331, unsigned long long _mod = 998244353) : seed(_seed), mod(_mod) {
     n = static_cast<int>(s.size());
     p.resize(n + 1);
     h.resize(n + 1);
@@ -545,14 +545,14 @@ class Fenwick {
   }
   inline T Get(int l, int r) {
     assert(l >= 0 && l < n && r >= 0 && r < n);
-    T res = get(r);
+    T res = Get(r);
     if (l - 1 >= 0) {
-      res -= get(l - 1);
+      res -= Get(l - 1);
     }
     return res;
   }
   inline int KthMin(int k) {
-    // kthMax = n - kthMin + 1
+    // KthMax = n - KthMin + 1
     assert(k >= 1 && k <= n);
     int cnt = 0, x = 0;
     for (int i = (int) log2(n); i >= 0; i--) {
@@ -569,20 +569,20 @@ class Fenwick {
 
 // struct Node {
 //   int a = ...; // don't forget to set default value
-//   inline void operator += (Node &other) {
+//   inline void operator += (Node& other) {
 //     ...
 //   }
 // };
 endsnippet
 
-snippet fenwick2D
+snippet fenwick2d
 // 2D Fenwick
 #define lowbit(x) ((-x) & x)
 
 template <typename T>
 class Fenwick {
  public:
-  vector<vector<T> > fenw;
+  vector<vector<T>> fenw;
   int n, m;
   Fenwick(int _n, int _m) : n(_n), m(_m) {
     fenw.resize(n + 1);
@@ -614,15 +614,15 @@ class Fenwick {
     assert (x1 <= x2 && y1 <= y1);
     assert(x1 >= 0 && x1 < n && x2 >= 0 && x2 < n);
     assert(y1 >= 0 && y1 < m && y2 >= 0 && y2 < m);
-    T res = get(x2, y2);
+    T res = Get(x2, y2);
     if (x1 - 1 >= 0) {
-      res -= get(x1 - 1, y2);
+      res -= Get(x1 - 1, y2);
     }
     if (y1 - 1 >= 0) {
-      res -= get(x2, y1 - 1);
+      res -= Get(x2, y1 - 1);
     }
     if (x1 - 1 >= 0 && y1 - 1 >= 0) {
-      res += get(x1 - 1, y1 - 1);
+      res += Get(x1 - 1, y1 - 1);
     }
     return res;
   }
@@ -630,7 +630,7 @@ class Fenwick {
 
 // struct Node {
 //   int a = ...; // don't forget to set default value
-//   inline void operator += (Node &other) {
+//   inline void operator += (Node& other) {
 //     ...
 //   }
 // };
@@ -638,8 +638,8 @@ endsnippet
 
 snippet fenwickrmq
 // usage:
-//   auto fun = [&](int i, int j) { return min(i, j); };
-//   Fenwick<int, decltype(fun)> fen(a, fun);
+//   auto Fun = [&](int i, int j) { return min(i, j); };
+//   Fenwick<int, decltype(Fun)> fen(a, Fun);
 // or:
 //   Fenwick<int> fen(a, [&](int i, int j) { return min(i, j); });
 template <typename T, class F = function<T(const T&, const T&)>>
@@ -647,8 +647,8 @@ class Fenwick {
  public:
   int n;
   vector<T> val, fenw;
-  F func;
-  Fenwick (const vector<T>& a, const F& f) : func(f) {
+  F Func;
+  Fenwick (const vector<T>& a, const F& f) : Func(f) {
     n = static_cast<int>(a.size());
     val.resize(n);
     fenw.resize(n);
@@ -656,7 +656,7 @@ class Fenwick {
       val[i - 1] = fenw[i - 1] = a[i - 1];
       int len = lowbit(i);
       for (int j = 1; j < len; j <<= 1) {
-        fenw[i - 1] = func(fenw[i - 1], fenw[i - j - 1]);
+        fenw[i - 1] = Func(fenw[i - 1], fenw[i - j - 1]);
       }
     }
   }
@@ -669,7 +669,7 @@ class Fenwick {
       fenw[i - 1] = val[i - 1];
       int len = lowbit(i);
       for (int j = 1; j < len; j <<= 1) {
-        fenw[i - 1] = func(fenw[i - 1], fenw[i - j - 1]);
+        fenw[i - 1] = Func(fenw[i - 1], fenw[i - j - 1]);
       }
     }
   }
@@ -681,10 +681,10 @@ class Fenwick {
     ++l, ++r;
     T res = val[r - 1];
     while (true) {
-      res = func(res, val[r - 1]);
+      res = Func(res, val[r - 1]);
       if (l == r) break;
       for (--r; r - lowbit(r) >= l; r -= lowbit(r)) {
-        res = func(res, fenw[r - 1]);
+        res = Func(res, fenw[r - 1]);
       }
     }
     return res;
@@ -697,14 +697,14 @@ vector<int> FindSCC(const vector<vector<int>>& g, int& id) {
   int n = static_cast<int>(g.size());
   int top = 0;
   vector<int> comp(n, -1), in(n, -1), out(n, -1), stk(n + 1, -1), order;
-  function<int(int u)> tarjan = [&](int u) -> int {
+  function<int(int u)> Tarjan = [&](int u) -> int {
     assert(top >= 0 && top <= n);
     stk[top++] = u;
     int low = in[u] = (int) order.size();
     order.push_back(u);
-    for (auto &v : g[u]) {
+    for (auto& v : g[u]) {
       if (in[v] == -1) {
-        low = min(low, tarjan(v));
+        low = min(low, Tarjan(v));
         continue;
       }
       if (comp[v] == -1) {
@@ -723,7 +723,7 @@ vector<int> FindSCC(const vector<vector<int>>& g, int& id) {
   };
   for (int i = 0; i < n; i++) {
     if (in[i] == -1) {
-      tarjan(i);
+      Tarjan(i);
     }
   }
   return comp;
@@ -763,20 +763,20 @@ class SegmentTree {
   struct Node {
     // remember to set default value
     ...
-    void apply(int l, int r, ... v) {
+    void Apply(int l, int r, ... v) {
       // [l, r] is range of this node
       assert(l <= r);
       ...
     }
   };
 
-  inline Node unite(const Node &a, const Node &b) const {
+  inline Node Unite(const Node& a, const Node& b) const {
     Node res{};
     ...
     return res;
   }
 
-  inline void pushdown(int u, int l, int r) {
+  inline void PushDown(int u, int l, int r) {
     assert(u >= 0 && u < 2 * n && l <= r);
     int mid = (l + r) >> 1;
     int lson = u + 1, rson = u + ((mid - l + 1) << 1);
@@ -786,45 +786,45 @@ class SegmentTree {
     ...
   /*
     if (tr[u].add != 0) {
-      tr[lson].apply(l, mid, tr[u].add);
-      tr[rson].apply(mid + 1, r, tr[u].add);
+      tr[lson].Apply(l, mid, tr[u].add);
+      tr[rson].Apply(mid + 1, r, tr[u].add);
       tr[u].add = 0;
     }
   */
   }
 
-  inline void pushup(int u, int lson, int rson) {
-    tr[u] = unite(tr[lson], tr[rson]);
+  inline void PushUp(int u, int lson, int rson) {
+    tr[u] = Unite(tr[lson], tr[rson]);
   }
 
   int n;
   vector<Node> tr;
   
-  void build(int u, int l, int r) {
+  void Build(int u, int l, int r) {
     if (l == r) {
       return;
     }
     int mid = (l + r) >> 1;
     int lson = u + 1, rson = u + ((mid - l + 1) << 1);
-    build(lson, l, mid);
-    build(rson, mid + 1, r);
-    pushup(u, lson, rson);
+    Build(lson, l, mid);
+    Build(rson, mid + 1, r);
+    PushUp(u, lson, rson);
   }
 
   template <typename T>
-  void build(int u, int l, int r, const vector<T> &v) {
+  void Build(int u, int l, int r, const vector<T> &v) {
     if (l == r) {
-      tr[u].apply(l, r, v[l]);
+      tr[u].Apply(l, r, v[l]);
       return;
     }
     int mid = (l + r) >> 1;
     int lson = u + 1, rson = u + ((mid - l + 1) << 1);
-    build(lson, l, mid, v);
-    build(rson, mid + 1, r, v);
-    pushup(u, lson, rson);
+    Build(lson, l, mid, v);
+    Build(rson, mid + 1, r, v);
+    PushUp(u, lson, rson);
   }
 
-  inline Node query(int u, int l, int r, int ql, int qr) {
+  inline Node Query(int u, int l, int r, int ql, int qr) {
     // [l, r] is range of tr[u]
     // [ql, qr] is range of query
     if (ql <= l && r <= qr) {
@@ -832,43 +832,43 @@ class SegmentTree {
     }
     int mid = (l + r) >> 1;
     int lson = u + 1, rson = u + ((mid - l + 1) << 1);
-    pushdown(u, l, r);
+    PushDown(u, l, r);
     Node res{};
     if (qr <= mid) {
-      res = query(lson, l, mid, ql, qr);
+      res = Query(lson, l, mid, ql, qr);
     } else if (ql > mid) {
-      res = query(rson, mid + 1, r, ql, qr);
+      res = Query(rson, mid + 1, r, ql, qr);
     } else {
-      res = unite(query(lson, l, mid, ql, qr), query(rson, mid + 1, r, ql, qr));
+      res = Unite(Query(lson, l, mid, ql, qr), Query(rson, mid + 1, r, ql, qr));
     }
-    pushup(u, lson, rson);
+    PushUp(u, lson, rson);
     return res;
   }
 
   template <typename... T>
-  inline void modify(int u, int l, int r, int ml, int mr, const T&... v) {
+  inline void Modify(int u, int l, int r, int ml, int mr, const T&... v) {
     // [l, r] is range of tr[u]
     // [ml, mr] is range of modification
     if (ml <= l && r <= mr) {
-      tr[u].apply(l, r, v...);
+      tr[u].Apply(l, r, v...);
       return;
     }
     int mid = (l + r) >> 1;
     int lson = u + 1, rson = u + ((mid - l + 1) << 1);
-    pushdown(u, l, r);
+    PushDown(u, l, r);
     if (ml <= mid) {
-      modify(lson, l, mid, ml, mr, v...);
+      Modify(lson, l, mid, ml, mr, v...);
     }
     if (mr > mid) {
-       modify(rson, mid + 1, r, ml, mr, v...);
+       Modify(rson, mid + 1, r, ml, mr, v...);
     }
-    pushup(u, lson, rson);
+    PushUp(u, lson, rson);
   }
 
   SegmentTree(int _n) : n(_n) {
     assert(n > 0);
     tr.resize(2 * n - 1);
-    build(0, 0, n - 1);
+    Build(0, 0, n - 1);
   }
 
   template <typename T>
@@ -876,23 +876,23 @@ class SegmentTree {
     n = (int) v.size();
     assert(n > 0);
     tr.resize(2 * n - 1);
-    build(0, 0, n - 1, v);
+    Build(0, 0, n - 1, v);
   }
 
-  inline Node query(int ql, int qr) {
+  inline Node Query(int ql, int qr) {
     assert(ql >= 0 && ql <= qr && qr < n);
-    return query(0, 0, n - 1, ql, qr);
+    return Query(0, 0, n - 1, ql, qr);
   }
 
-  inline Node query(int p) {
+  inline Node Query(int p) {
     assert(p >= 0 && p < n);
-    return query(0, 0, n - 1, p, p);
+    return Query(0, 0, n - 1, p, p);
   }
 
   template <typename... T>
-  inline void modify(int ml, int mr, const T&... v) {
+  inline void Modify(int ml, int mr, const T&... v) {
     assert(ml >= 0 && ml <= mr && mr < n);
-    modify(0, 0, n - 1, ml, mr, v...);
+    Modify(0, 0, n - 1, ml, mr, v...);
   }
 };
 endsnippet
@@ -996,7 +996,7 @@ vector<int> BuildLcp(int n, const T& s, const vector<int>& sa) {
 }
 
 template <typename T>
-vector<int> BuildLcp(const T& s, const vector<int> &sa) {
+vector<int> BuildLcp(const T& s, const vector<int>& sa) {
   return BuildLcp((int) s.size(), s, sa);
 }
 endsnippet
@@ -1004,9 +1004,9 @@ endsnippet
 snippet countpairs
 // usage:
 //  CountPairs(a, [&](int i, int j) { return i < j; });
-//  Counts the number of pairs i < j such that func(a[i], a[j]) is true.
+//  Counts the number of pairs i < j such that Func(a[i], a[j]) is true.
 template <typename T, typename F = function<bool(const T&, const T&)>>
-long long CountPairs(vector<T> a, const F& func) {
+long long CountPairs(vector<T> a, const F& Func) {
   int n = static_cast<int>(a.size());
   vector<T> temp(n);
   function<long long(int, int)> solve = [&](int l, int r) -> long long {
@@ -1017,7 +1017,7 @@ long long CountPairs(vector<T> a, const F& func) {
     long long res = solve(l, mid) + solve(mid + 1, r);
     int i = l, j = mid + 1, k = 0;
     while (i <= mid || j <= r) {
-      if (i <= mid && (j > r || func(a[i], a[j]))) {
+      if (i <= mid && (j > r || Func(a[i], a[j]))) {
         temp[k++] = a[i++];
       } else {
         res += i - l;
@@ -1028,5 +1028,93 @@ long long CountPairs(vector<T> a, const F& func) {
     return res;
   };
   return solve(0, n - 1);
+}
+endsnippet
+
+snippet lis
+// q[] is the actual subseqence
+// f[] is the length of subsequen ending with a[i]
+// longest increasing subsequence
+template <typename T>
+vector<T> Lis(vector<T>& a) {
+  int n = static_cast<int>(a.size());
+  assert(n > 0);
+  vector<T> q{a[0]};
+  vector<int> f(n);
+  f[0] = 1;
+  for (int i = 1; i < n; i ++ ) {
+    if (a[i] > q.back()) {
+      q.emplace_back(a[i]);
+      f[i] = (int) q.size();
+    } else {
+      int pos = (int) (lower_bound(q.begin(), q.end(), a[i]) - q.begin());
+      q[pos] = a[i];
+      f[i] = pos + 1;
+    }
+  }
+  return q;
+}
+
+// longest non-decreasing subsequence
+template <typename T>
+vector<T> Lnds(vector<T>& a) {
+  int n = static_cast<int>(a.size());
+  assert(n > 0);
+  vector<T> q{a[0]};
+  vector<int> f(n);
+  f[0] = 1;
+  for (int i = 1; i < n; i ++ ) {
+    if (a[i] >= q.back()) {
+      q.emplace_back(a[i]);
+      f[i] = (int) q.size();
+    } else {
+      int pos = (int) (upper_bound(q.begin(), q.end(), a[i]) - q.begin());
+      q[pos] = a[i];
+      f[i] = pos + 1;
+    }
+  }
+  return q;
+}
+
+// longest decreasing subsequence
+template <typename T>
+vector<T> Lds(vector<T>& a) {
+  int n = static_cast<int>(a.size());
+  assert(n > 0);
+  vector<T> q{a[0]};
+  vector<int> f(n);
+  f[0] = 1;
+  for (int i = 1; i < n; i ++ ) {
+    if (a[i] < q.back()) {
+      q.emplace_back(a[i]);
+      f[i] = (int) q.size();
+    } else {
+      int pos = (int) (lower_bound(q.begin(), q.end(), a[i], greater<int>()) - q.begin());
+      q[pos] = a[i];
+      f[i] = pos + 1;
+    }
+  }
+  return q;
+}
+
+// longest non-increasing subsequence
+template <typename T>
+vector<T> Lnis(vector<T>& a) {
+  int n = static_cast<int>(a.size());
+  assert(n > 0);
+  vector<T> q{a[0]};
+  vector<int> f(n);
+  f[0] = 1;
+  for (int i = 1; i < n; i ++ ) {
+    if (a[i] <= q.back()) {
+      q.emplace_back(a[i]);
+      f[i] = (int) q.size();
+    } else {
+      int pos = (int) (upper_bound(q.begin(), q.end(), a[i], greater<int>()) - q.begin());
+      q[pos] = a[i];
+      f[i] = pos + 1;
+    }
+  }
+  return q;
 }
 endsnippet

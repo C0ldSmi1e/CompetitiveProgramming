@@ -1,10 +1,13 @@
+// q[] is the actual subseqence
+// f[] is the length of subsequen ending with a[i]
 // longest increasing subsequence
-template <typename A>
-vector<A> Lis(vector<A> &a) {
+template <typename T>
+vector<T> Lis(vector<T>& a) {
   int n = static_cast<int>(a.size());
   assert(n > 0);
-  vector<A> q{a[0]};
+  vector<T> q{a[0]};
   vector<int> f(n);
+  f[0] = 1;
   for (int i = 1; i < n; i ++ ) {
     if (a[i] > q.back()) {
       q.emplace_back(a[i]);
@@ -19,12 +22,13 @@ vector<A> Lis(vector<A> &a) {
 }
 
 // longest non-decreasing subsequence
-template <typename A>
-vector<A> Lnds(vector<A> &a) {
+template <typename T>
+vector<T> Lnds(vector<T>& a) {
   int n = static_cast<int>(a.size());
   assert(n > 0);
-  vector<A> q{a[0]};
+  vector<T> q{a[0]};
   vector<int> f(n);
+  f[0] = 1;
   for (int i = 1; i < n; i ++ ) {
     if (a[i] >= q.back()) {
       q.emplace_back(a[i]);
@@ -38,14 +42,14 @@ vector<A> Lnds(vector<A> &a) {
   return q;
 }
 
-
 // longest decreasing subsequence
-template <typename A>
-vector<A> Lds(vector<A> &a) {
+template <typename T>
+vector<T> Lds(vector<T>& a) {
   int n = static_cast<int>(a.size());
   assert(n > 0);
-  vector<A> q{a[0]};
+  vector<T> q{a[0]};
   vector<int> f(n);
+  f[0] = 1;
   for (int i = 1; i < n; i ++ ) {
     if (a[i] < q.back()) {
       q.emplace_back(a[i]);
@@ -60,12 +64,13 @@ vector<A> Lds(vector<A> &a) {
 }
 
 // longest non-increasing subsequence
-template <typename A>
-vector<A> Lnis(vector<A> &a) {
+template <typename T>
+vector<T> Lnis(vector<T>& a) {
   int n = static_cast<int>(a.size());
   assert(n > 0);
-  vector<A> q{a[0]};
+  vector<T> q{a[0]};
   vector<int> f(n);
+  f[0] = 1;
   for (int i = 1; i < n; i ++ ) {
     if (a[i] <= q.back()) {
       q.emplace_back(a[i]);

@@ -1,5 +1,5 @@
-template <typename A, typename B>
-string to_string(pair<A, B> p);
+template <typename T, typename U>
+string to_string(pair<T, U> p);
 
 string to_string(const string& s) { return '"' + s + '"'; }
 
@@ -32,11 +32,11 @@ string to_string(bitset<N> v) {
   return res;
 }
 
-template <typename A>
-string to_string(A v) {
+template <typename T>
+string to_string(T v) {
   bool first = true;
   string res = "{";
-  for (const auto &x : v) {
+  for (const auto& x : v) {
     if (!first) {
 	  res += ", ";
     }
@@ -47,8 +47,8 @@ string to_string(A v) {
   return res;
 }
 
-template <typename A>
-string to_string(priority_queue<A> heap) {
+template <typename T>
+string to_string(priority_queue<T> heap) {
   bool first = true;
   string res = "{";
   while ((int) heap.size()) {
@@ -63,8 +63,8 @@ string to_string(priority_queue<A> heap) {
   return res;
 }
 
-template <typename A>
-string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
+template <typename T>
+string to_string(priority_queue<T, vector<T>, greater<T>> heap) {
   bool first = true;
   string res = "{";
   while ((int) heap.size()) {
@@ -79,8 +79,8 @@ string to_string(priority_queue<A, vector<A>, greater<A> > heap) {
   return res;
 }
 
-template <typename A, typename B>
-string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+template <typename T, typename U>
+string to_string(pair<T, U> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
 
 template <typename ... Ts>
 string to_string(const Ts& ... ts) {
@@ -91,7 +91,7 @@ string to_string(const Ts& ... ts) {
 }
 
 template <typename... Args>
-string to_string(const std::tuple<Args...> &t) {
+string to_string(const std::tuple<Args...>& t) {
   string res = "(";
   apply([&](const auto&... ts) { res += to_string(ts...); }, t);
   res += ")";
