@@ -312,9 +312,21 @@ snippet rand
 mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
 
 // [l, r]
-long long Rand(long long l, long long r) {
-  return (rng() % (r + 1 - l)) + l;
+template <typename T>
+T Rand(T l, T r) {
+  uniform_int_distribution<T> d(l, r);
+  return d(rng);
 }
+
+template <typename T>
+T RealRand(T l, T r) {
+  uniform_real_distribution<T> d(l, r);
+  return d(rng);
+}
+
+// long long Rand(long long l, long long r) {
+//   return (rng() % (r + 1 - l)) + l;
+// }
 endsnippet
 
 snippet dsu
@@ -577,7 +589,9 @@ endsnippet
 
 snippet fenwick2d
 // 2D Fenwick
-#define lowbit(x) ((-x) & x)
+#ifndef lowbit
+#define lowbit(x) (x & (-x))
+#endif
 
 template <typename T>
 class Fenwick {
@@ -637,11 +651,15 @@ class Fenwick {
 endsnippet
 
 snippet fenwickrmq
+#ifndef lowbit
+#define lowbit(x) (x & (-x))
+#endif
+
 // usage:
 //   auto Fun = [&](int i, int j) { return min(i, j); };
-//   Fenwick<int, decltype(Fun)> fen(a, Fun);
+//   Fenwick<int, decltype(Fun)> fenw(a, Fun);
 // or:
-//   Fenwick<int> fen(a, [&](int i, int j) { return min(i, j); });
+//   Fenwick<int> fenw(a, [&](int i, int j) { return min(i, j); });
 template <typename T, class F = function<T(const T&, const T&)>>
 class Fenwick {
  public:
@@ -860,7 +878,7 @@ class SegmentTree {
       Modify(lson, l, mid, ml, mr, v...);
     }
     if (mr > mid) {
-       Modify(rson, mid + 1, r, ml, mr, v...);
+      Modify(rson, mid + 1, r, ml, mr, v...);
     }
     PushUp(u, lson, rson);
   }

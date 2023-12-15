@@ -91,8 +91,10 @@ S[x1, y1] += c, S[x2 + 1, y1] -= c, S[x1, y2 + 1] -= c, S[x2 + 1, y2 + 1] += c
 // 枚举某个数的二进制表示下的子集（不包括 0 ）
 // 包含 x ：
 for (int mask = x; mask; mask = (mask - 1) & x)
+
 // 不包含 x ：
 for (int mask = x - 1 & x; mask; mask = (mask - 1) & x)
+
 // 以下效率更高一点（不包含 x ）：
 for (int bit = 0; bit < bit_cnt; bit++) {
   for (int mask = 0; mask < (1 << bit_cnt); mask++) {
@@ -103,8 +105,20 @@ for (int bit = 0; bit < bit_cnt; bit++) {
 }
 
 // 在 O(3^n) 内遍历 [1,2^n) 的所有数的子集
-for (int m = 0; m < (1 << n); ++m) {
-  for (int s = m; s; s = (s-1) & m) {
+for (int mask = 0; mask < (1 << n); mask++) {
+  for (int sub = mask; ; sub = (sub - 1) & mask) {
     // s is m's submask
+    if (sub == 0) {
+      break;
+    }
+  }
+}
+
+// in O(n * 2^n), get the sum of submask of mask (SOS DP)
+for (int bit = 0; bit < n; bit++) {
+  for (int mask = 0; mask < 1 << n; mask++) {
+    if ((mask >> bit) & 1) {
+      dp[mask] += dp[mask ^ (1 << bit)];
+    }
   }
 }

@@ -34,7 +34,7 @@ void dfs(int u) {
       dfs(j);
     }
   }
-  ord.PB(u);
+  ord.emplace_back(u);
 }
 
 for (int i = 1; i <= n; i++) {

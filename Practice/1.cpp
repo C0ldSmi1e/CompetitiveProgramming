@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 2023-11-14 00:42:40
+ * Created Time: 2023-12-14 15:57:15
 **/
 
 #include <bits/stdc++.h>
@@ -14,8 +14,7 @@ using namespace std;
 #endif
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+  cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
   return 0;

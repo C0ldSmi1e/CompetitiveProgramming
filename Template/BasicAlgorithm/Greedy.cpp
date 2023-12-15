@@ -14,7 +14,7 @@ sort(seg.begin(), seg.end());
 int l = -INF, r = -INF, res = 0;
 for (int i = 0; i < n; i++)
   if (seg[i].first > r) {
-    res ++ ;
+    res += 1;
     l = seg[i].first;
     r = seg[i].second;
   } else {
