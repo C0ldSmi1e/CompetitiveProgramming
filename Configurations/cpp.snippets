@@ -309,7 +309,12 @@ Mint Fact(int n) {
 endsnippet
 
 snippet rand
-mt19937 rng((unsigned int)chrono::steady_clock::now().time_since_epoch().count());
+/*
+random_device rd;
+mt19937_64 rng{rd()};
+*/
+
+mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 // [l, r]
 template <typename T>

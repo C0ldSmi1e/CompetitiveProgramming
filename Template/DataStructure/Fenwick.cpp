@@ -528,6 +528,7 @@ class Fenwick {
 //   Fenwick<int, decltype(fun)> fen(a, fun);
 // or:
 //   Fenwick<int> fen(a, [&](int i, int j) { return min(i, j); });
+#define lowbit(x) (x&(-x))
 template <typename T, class F = function<T(const T&, const T&)>>
 class Fenwick {
  public:
@@ -548,7 +549,7 @@ class Fenwick {
   }
   // change value at k to v
   // k is [0, n)
-  inline void modify(int k, T v) {
+  inline void Modify(int k, T v) {
     assert(k >= 0 && k < n);
     val[k] = v;
     for (int i = k + 1; i <= n; i += lowbit(i)) {
@@ -561,7 +562,7 @@ class Fenwick {
   }
   // l and r are [0, n)
   // ask for [l, r]
-  inline T query(int l, int r) {
+  inline T Query(int l, int r) {
     assert(l >= 0 && l < n);
     assert(r >= 0 && r < n);
     ++l, ++r;
