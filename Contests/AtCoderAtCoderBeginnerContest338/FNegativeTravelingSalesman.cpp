@@ -21,22 +21,21 @@ int main() {
 
   int n, m;
   cin >> n >> m;
-  const long long INF = (long long) 1e12;
-  vector<vector<long long>> g(n, vector<long long>(n, INF));
+  const int INF = (int) 1e9;
+  vector<vector<int>> g(n, vector<int>(n, INF));
   for (int i = 0; i < n; i++) {
     g[i][i] = 0;
   }
   for (int i = 0; i < m; i++) {
-    int a, b;
-    long long c;
+    int a, b, c;
     cin >> a >> b >> c;
     --a;
     --b;
     g[a][b] = min(g[a][b], c);
   }
-  vector<vector<long long>> dist(n, vector<long long>(n));
+  vector<vector<int>> dist(n, vector<int>(n));
   for (int start = 0; start < n; start++) {
-    vector<long long> t(n, INF);
+    vector<int> t(n, INF);
     t[start] = 0;
     vector<bool> in(n);
     vector<int> q{start};
@@ -55,26 +54,29 @@ int main() {
     }
     dist[start] = t;
   }
-  vector<vector<long long>> dp(1 << n, vector<long long>(n, INF));
+  vector<vector<int>> dp(1 << n, vector<int>(n, INF));
   for (int i = 0; i < n; i++) {
     dp[1 << i][i] = 0;
   }
   for (int mask = 1; mask < 1 << n; mask++) {
     for (int u = 0; u < n; u++) {
+      if (dp[mask][u] == INF) {
+        continue;
+      }
       if ((mask >> u) & 1) {
         for (int v = 0; v < n; v++) {
-          if (((mask >> v) & 1) == 0) {
+          if (((mask >> v) & 1) == 0 && dist[u][v] < INF / 2) {
             dp[mask | (1 << v)][v] = min(dp[mask | (1 << v)][v], dp[mask][u] + dist[u][v]);
           }
         }
       }
     }
   }
-  long long res = INF;
+  int res = INF;
   for (int i = 0; i < n; i++) {
     res = min(res, dp[(1 << n) - 1][i]);
   }
-  if (res >= INF / 2) {
+  if (res >= INF) {
     cout << "No\n";
   } else {
     cout << res << '\n';

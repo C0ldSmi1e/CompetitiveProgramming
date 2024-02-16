@@ -30,7 +30,7 @@ for (int i = 1, j = 0; i <= n; i++) {
 
 // KMP 2
 template <typename T>
-vector<int> kmp_table(int n, const T &s) {
+vector<int> kmpTable(int n, const T& s) {
   vector<int> p(n, 0);
   int k = 0;
   for (int i = 1; i < n; i++) {
@@ -46,12 +46,12 @@ vector<int> kmp_table(int n, const T &s) {
 }
 
 template <typename T>
-vector<int> kmp_table(const T &s) {
-  return kmp_table((int) s.size(), s);
+vector<int> kmpTable(const T& s) {
+  return kmpTable((int) s.size(), s);
 }
 
 template <typename T>
-vector<int> kmp_search(int n, const T &s, int m, const T &w, const vector<int> &p) {
+vector<int> kmpSearch(int n, const T& s, int m, const T& w, const vector<int>& p) {
   assert(n >= 1 && (int) p.size() == n);
   vector<int> res;
   int k = 0;
@@ -66,13 +66,13 @@ vector<int> kmp_search(int n, const T &s, int m, const T &w, const vector<int> &
       res.push_back(i - n + 1);
     }
   }
-  // returns 0-indexed positions of occurrences of w in s
+  // returns 0-indexed positions of occurrences of s in w
   return res;
 }
 
 template <typename T>
-vector<int> kmp_search(const T &s, const T &w, const vector<int> &p) {
-  return kmp_search((int) s.size(), s, (int) w.size(), w, p);
+vector<int> kmpSearch(const T& s, const T& w, const vector<int>& p) {
+  return kmpSearch((int) s.size(), s, (int) w.size(), w, p);
 }
 
 

@@ -1,22 +1,65 @@
-/**
- * Author: C0ldSmi1e
- * Created Time: 01/01/2024 01:42:43 PM
-**/
+// name: <your name here>
+// email: <your email here>
 
-#include <bits/stdc++.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
 
-using namespace std;
+#define LIMIT 50
+#define RAND_RANGE 100
 
-#ifdef DANIEL_DEBUG_TEMPLATE
-#include "debug.h"
-#else
-#define debug(...) 42
-#endif
+int main(){
 
-int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-  cout << fixed << setprecision(10);
+  int source[LIMIT]; // array to hold input data values
+  int dest[LIMIT];   // array to hold sorted data values
+                     // use dest only if you are using two arrays
+  bool valid[LIMIT]; // array that indicates which input values are valid
 
+  int i;             // loop variable
+  int j;             // loop variable
+  int smallest;      // current smallest element
+
+  //seed random numbers
+  srand((unsigned)time(NULL));
+
+  //initialize valid array - at begining the full array is valid
+  for (i=0; i<LIMIT; i++) {
+    valid[i] = true;
+  }
+
+  //initialize source array with random numbers from 0..RAND_RANGE
+  for (i=0; i<LIMIT; i++) {
+    source[i] = rand() % RAND_RANGE;
+  }
+
+  //print out source array in rows of 20 elements
+  printf("Source array:\n");
+  for (i=0; i < ((LIMIT/20)+1); i++) {
+    for (j=0; j<20; j++) {
+      if (i*20+j < LIMIT) {
+	printf("%.2d ",source[i*20+j]);
+      }
+    }
+    printf("\n");
+  }
+  printf("\n");
+
+  //selection sort
+  for (i=0; i<LIMIT; i++) {
+
+    // INSERT YOUR CODE HERE
+    
+  }
+  
+  //print out sorted array in rows of 10
+  printf("Destination array:\n");
+  
+
+  // INSERT YOUR CODE HERE
+    
+ 
+  
+  
   return 0;
 }

@@ -1,8 +1,3 @@
-/**
- * Author: C0ldSmi1e
- * Created Time: 01/27/2024 06:02:35 PM
-**/
-
 #include <bits/stdc++.h>
 
 using namespace std;
