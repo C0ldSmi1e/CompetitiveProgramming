@@ -1141,3 +1141,29 @@ vector<T> Lnis(vector<T>& a) {
   return q;
 }
 endsnippet
+
+snippet zfunction
+// z[i] is the length of the longest common prefix
+// between s and the suffix of s starting at i
+template <typename T>
+vector<int> ZFunction(int n, const T &s) {
+  vector<int> z(n, n);
+  int l = 0, r = 0;
+  for (int i = 1; i < n; i++) {
+    z[i] = (i > r ? 0 : min(r - i + 1, z[i - l]));
+    while (i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+      z[i]++;
+    }
+    if (i + z[i] - 1 > r) {
+      l = i;
+      r = i + z[i] - 1;
+    }
+  }
+  return z;
+}
+
+template <typename T>
+vector<int> ZFunction(const T &s) {
+  return ZFunction((int) s.size(), s);
+}
+endsnippet

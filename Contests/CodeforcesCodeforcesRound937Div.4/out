@@ -1,0 +1,14 @@
+[a, depth, tot, t]: 2 2 4 1
+2
+0
+1
+[a, depth, tot, t]: 1 1 2 0
+1
+-1
+[a, depth, tot, t]: 3 2 4 0
+3
+[a, depth, tot, t]: 8 4 16 7
+6
+-1
+-1
+3

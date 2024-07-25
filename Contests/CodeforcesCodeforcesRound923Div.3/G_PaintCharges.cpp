@@ -29,31 +29,44 @@ int main() {
       cin >> u;
     }
     const int INF = (int) 1e9;
-    vector<vector<int>> dp(n, vector<int>(n, INF));
-    for (int len = 1; len <= n; len++) {
-      for (int l = 0; l + len - 1 < n; l++) {
-        int r = l + len - 1;
-        if (len == 1) {
-          dp[l][r] = 1;
-          continue;
-        }
-        for (int i = l; i <= r; i++) {
-          if (i - 1 >= l) {
-            dp[l][r] = min(dp[l][r], dp[l][i - 1] + dp[i][r]);
+    vector<vector<vector<int>>> dp(n, vector<vector<int>>(n, vector<int>(n, INF)));
+    for (int i = 0; i < n; i++) {
+      int l = max(0, i - a[i] + 1);
+      int r = min(n - 1, i + a[i] - 1);
+      dp[i][i][r] = dp[i][l][i] = 1;
+    }
+    for (int i = 0; i < n - 1; i++) {
+      for (int l = 0; l < n; l++) {
+        for (int r = l; r < n; r++) {
+          dp[i + 1][l][r] = min(dp[i + 1][l][r], dp[i][l][r]);
+          int R = min(n - 1, i + 1 + a[i + 1] - 1);
+          if (R >= r) {
+            if (r >= i) {
+              dp[i + 1][l][R] = min(dp[i + 1][l][R], dp[i][l][r] + 1);
+            } else {
+              for (int j = i + 2; j <= R; j++) {
+                int L = max(0, j - a[j] + 1);
+                if (L <= l) {
+                  dp[j][L][R] = min(dp[j][L][R], dp[i][l][r] + 2);
+                }
+                if (L <= r + 1) {
+                  dp[j][l][R] = min(dp[j][l][R], dp[i][l][r] + 2);
+                }
+              }
+            }
           }
-          if (i + 1 <= r) {
-            dp[l][r] = min(dp[l][r], dp[l][i] + dp[i + 1][r]);
+          int L = max(0, i + 1 - a[i + 1] + 1);
+          if (L <= l) {
+            dp[i + 1][L][max(r, i + 1)] = min(dp[i + 1][L][max(r, i + 1)], dp[i][l][r] + 1);
+            continue;
           }
-          if (i - a[i] + 1 <= l) {
-            dp[l][r] = min(dp[l][r], 1 + (i + 1 <= r ? dp[i + 1][r] : 0));
-          }
-          if (i + a[i] - 1 >= r) {
-            dp[l][r] = min(dp[l][r], (i - 1 >= l ? dp[l][i - 1] : 0) + 1);
+          if (L <= r + 1) {
+            dp[i + 1][l][max(r, i + 1)] = min(dp[i + 1][l][max(r, i + 1)], dp[i][l][r] + 1);
           }
         }
       }
     }
-    cout << dp[0][n - 1] << '\n';
+    cout << dp[n - 1][0][n - 1] << '\n';
   }
   return 0;
 }

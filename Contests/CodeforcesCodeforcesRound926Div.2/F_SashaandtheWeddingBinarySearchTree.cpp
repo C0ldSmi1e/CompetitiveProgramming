@@ -239,6 +239,8 @@ int main() {
     seq.emplace_back(c);
     Mint ans = 1;
     auto Get = [&](int l, int r, int cnt) -> Mint {
+      // from [1, r-l+1] choose cnt numbers
+      // C(r-l+1+cnt-1, cnt)
       Mint res = 1;
       for (int b = 1, a = r - l + 1 + cnt - 1; b <= cnt; b++, a--) {
         res = res * a / b;

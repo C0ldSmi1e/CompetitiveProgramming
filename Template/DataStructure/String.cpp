@@ -393,6 +393,8 @@ vector<int> BuildLcp(const T &s, const vector<int> &sa) {
 
 
 
+// z[i] is the length of the longest common prefix
+// between s and the suffix of s starting at i
 template <typename T>
 vector<int> ZFunction(int n, const T &s) {
   vector<int> z(n, n);

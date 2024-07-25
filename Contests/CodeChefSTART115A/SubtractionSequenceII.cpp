@@ -1,10 +1,10 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 01/05/2024 12:31:14 AM
+ * Created Time: 03/08/2024 08:59:21 PM
 **/
 
-// time-limit: 1000
-// problem-url: https://www.codechef.com/START115A/problems/SUBSEQII
+// time-limit: 2000
+// problem-url: 
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -182,7 +182,7 @@ ModType& md = VarMod::value;
 using Mint = Modular<VarMod>;
 */
 
-constexpr int md = (int) 1e9 + 7;  // set default mod.
+constexpr int md = (int) 1e9 + 7; // set default mod.
 using Mint = Modular<std::integral_constant<decay<decltype(md)>::type, md>>;
 
 /*
@@ -277,31 +277,31 @@ int main() {
     for (auto& u : a) {
       cin >> u;
     }
-    map<int, int> mp;
     auto b = a;
     sort(b.begin(), b.end());
     b.erase(unique(b.begin(), b.end()), b.end());
     int m = (int) b.size();
+    map<int, int> mp;
     for (int i = 0; i < m; i++) {
       mp[b[i]] = i;
     }
-    Mint res = 0;
+    Mint ans = 0;
     for (auto& u : a) {
-      res += u * qp(Mint(2), n - 1);
+      ans += u * qp(Mint(2), n - 1);
     }
-    Fenwick<int> fenw1(m + 1);
-    for (int i = n - 1; i >= 0; i--) {
-      if (mp[a[i]] + 1 <= m) {
-        res -= a[i] * qp(Mint(2), i) * fenw1.Get(mp[a[i]] + 1, m);
-      }
-      fenw1.Add(mp[a[i]], 1);
-    }
-    Fenwick<Mint> fenw2(m + 1);
+    Fenwick<Mint> fenw1(m);
+    Fenwick<Mint> fenw2(m);
     for (int i = 0; i < n; i++) {
-      res -= a[i] * fenw2.Get(mp[a[i]], m);
-      fenw2.Add(mp[a[i]], qp(Mint(2), i));
+      Mint tot = qp(Mint(2), i) - 1;
+      if (mp[a[i]] > 0) {
+        tot -= fenw1.Get(mp[a[i]] - 1);
+        ans -= fenw2.Get(mp[a[i]] - 1);
+      }
+      ans -= a[i] * tot;
+      fenw1.Add(mp[a[i]], qp(Mint(2), i));
+      fenw2.Add(mp[a[i]], a[i] * qp(Mint(2), i));
     }
-    cout << res << '\n';
+    cout << ans << '\n';
   }
   return 0;
 }

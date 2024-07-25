@@ -1,0 +1,71 @@
+/**
+ * Author: C0ldSmi1e
+ * Created Time: 06/23/2024 08:06:35 AM
+**/
+
+// time-limit: 2000
+// problem-url: https://codeforces.com/contest/1986/problem/D
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#ifdef DANIEL_DEBUG_TEMPLATE
+#include "../debug.h"
+#else
+#define debug(...) 42
+#endif
+
+int main() {
+  cin.tie(nullptr)->sync_with_stdio(false);
+  cout << fixed << setprecision(10);
+
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    for (int i = 0; i < n - 1; i++) {
+      vector<int> a(n - 1);
+      for (int j = 0; j < n; j++) {
+        a.emplace_back((int) (s[j] - '0'));
+        if (i == j) {
+          a.emplace_back();
+          j += 1;
+        }
+      }
+    }
+    vector<long long> stk{a[0]};
+    long long ans = -1;
+    auto Dfs = [&](auto& self, int i) -> void {
+      debug(i, stk);
+      if (i >= n - 1) {
+        if (used) {
+          long long res = 0;
+          for (auto& u : stk) {
+            res += u;
+            if (res >= (long long) 1e18) {
+              break;
+            }
+          }
+          if (ans == -1 || res < ans) {
+            ans = res;
+          }
+        }
+        return;
+      }
+      stk.emplace_back(a[i]);
+      self(self, i + 1,);
+      stk.pop_back();
+      long long t = stk.back();
+      stk.back() *= a[i];
+      self(self, i + 1);
+      stk.pop_back();
+      stk.emplace_back(t);
+    };
+    Dfs(Dfs, 1, false);
+    cout << ans << '\n';
+  }
+  return 0;
+}
