@@ -1,65 +1,54 @@
-// name: <your name here>
-// email: <your email here>
+/**
+ * Author: C0ldSmi1e
+ * Created Time: 02/07/2025 09:48:25 PM
+**/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <time.h>
+#include <bits/stdc++.h>
 
-#define LIMIT 50
-#define RAND_RANGE 100
+using namespace std;
 
-int main(){
+#ifdef DANIEL_DEBUG_TEMPLATE
+#include "../debug.h"
+#else
+#define debug(...) 42
+#endif
 
-  int source[LIMIT]; // array to hold input data values
-  int dest[LIMIT];   // array to hold sorted data values
-                     // use dest only if you are using two arrays
-  bool valid[LIMIT]; // array that indicates which input values are valid
+int main() {
+  cin.tie(nullptr)->sync_with_stdio(false);
+  cout << fixed << setprecision(10);
 
-  int i;             // loop variable
-  int j;             // loop variable
-  int smallest;      // current smallest element
-
-  //seed random numbers
-  srand((unsigned)time(NULL));
-
-  //initialize valid array - at begining the full array is valid
-  for (i=0; i<LIMIT; i++) {
-    valid[i] = true;
-  }
-
-  //initialize source array with random numbers from 0..RAND_RANGE
-  for (i=0; i<LIMIT; i++) {
-    source[i] = rand() % RAND_RANGE;
-  }
-
-  //print out source array in rows of 20 elements
-  printf("Source array:\n");
-  for (i=0; i < ((LIMIT/20)+1); i++) {
-    for (j=0; j<20; j++) {
-      if (i*20+j < LIMIT) {
-	printf("%.2d ",source[i*20+j]);
-      }
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, k;
+    cin >> n >> k;
+    vector<int> a(n);
+    for (auto& u : a) {
+      cin >> u;
     }
-    printf("\n");
+    int l = 1;
+    int r = n - (k - 2);
+    bool flag = false;
+    for (int i = l; i < r; i++) {
+      flag |= (a[i] != 1);
+    }
+    if (flag) {
+      cout << "1\n";
+      continue;
+    }
+    if (l + 1 < r) {
+      cout << "2\n";
+      continue;
+    }
+    int ans = 1;
+    for (int i = l; i < n; i += 2) {
+      if (a[i] != ans) {
+        break;
+      }
+      ans += 1;
+    }
+    cout << ans << '\n';
   }
-  printf("\n");
-
-  //selection sort
-  for (i=0; i<LIMIT; i++) {
-
-    // INSERT YOUR CODE HERE
-    
-  }
-  
-  //print out sorted array in rows of 10
-  printf("Destination array:\n");
-  
-
-  // INSERT YOUR CODE HERE
-    
- 
-  
-  
   return 0;
 }
+
