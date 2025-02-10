@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 02/07/2025 09:48:25 PM
+ * Created Time: 02/09/2025 11:56:57 AM
 **/
 
 #include <bits/stdc++.h>
@@ -20,35 +20,29 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int n, k;
-    cin >> n >> k;
-    vector<int> a(n);
+    int n;
+    cin >> n;
+    vector<long long> a(n);
     for (auto& u : a) {
       cin >> u;
     }
-    int l = 1;
-    int r = n - (k - 2);
-    bool flag = false;
-    for (int i = l; i < r; i++) {
-      flag |= (a[i] != 1);
+    long long sum = accumulate(a.begin(), a.end(), 0ll);
+    long long sor = 0;
+    for (auto& u : a) {
+      sor ^= u;
     }
-    if (flag) {
-      cout << "1\n";
-      continue;
+    vector<long long> ans;
+    long long add = (1ll << 50) + (sum & 1);
+    ans.emplace_back(add);
+    sum += add;
+    sor ^= add;
+    ans.emplace_back((2 * sor - sum) / 2);
+    ans.emplace_back((2 * sor - sum) / 2);
+    cout << (int) ans.size() << '\n';
+    for (auto& u : ans) {
+      cout << u << ' ';
     }
-    if (l + 1 < r) {
-      cout << "2\n";
-      continue;
-    }
-    int ans = 1;
-    for (int i = l; i < n; i += 2) {
-      if (a[i] != ans) {
-        break;
-      }
-      ans += 1;
-    }
-    cout << ans << '\n';
+    cout << '\n';
   }
   return 0;
 }
-

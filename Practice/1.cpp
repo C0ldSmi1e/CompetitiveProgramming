@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 02/08/2025 06:19:39 PM
+ * Created Time: 02/09/2025 11:08:22 AM
 **/
 
 #include <bits/stdc++.h>
@@ -22,37 +22,21 @@ int main() {
   while (T--) {
     int n;
     cin >> n;
-    vector<int> a(n);
-    for (auto& u : a) {
-      cin >> u;
+    if (n % 2 == 0) {
+      cout << "NO\n";
+      continue;
     }
-    vector<int> b(n);
-    for (auto& u : b) {
-      cin >> u;
+    cout << "YES\n";
+    set<int> S;
+    for (int i = 1; i <= 2 * n; i++) {
+      S.insert(i);
     }
-    int ans = 0;
-    auto Check = [&](int x) -> bool {
-      map<int, int> mpa;
-      for (auto& u : a) {
-        mpa[u & x] += 1;
-      }
-      map<int, int> mpb;
-      for (auto& u : b) {
-        mpb[u & x] += 1;
-      }
-      bool flag = true;
-      for (auto& [c, y] : mpa) {
-        int z = (x ^ c);
-        flag &= (mpb[z] == y);
-      }
-      return flag;
-    };
-    for (int bit = 30; bit >= 0; bit--) {
-      if (Check(ans | (1 << bit))) {
-        ans |= (1 << bit);
-      }
+    for (int i = 0, x = n - n / 2, y = n + 1; i < (n + 1) / 2; i++, x++, y++) {
+      cout << x << ' ' << y << '\n';
     }
-    cout << ans << '\n';
+    for (int i = 0, x = 1, y = 2 * n - (n / 2) + 1; i < n / 2; i++, x++, y++) {
+      cout << x << ' ' << y << '\n';
+    }
   }
   return 0;
 }
