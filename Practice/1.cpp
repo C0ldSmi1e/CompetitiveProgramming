@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 02/09/2025 11:08:22 AM
+ * Created Time: 02/10/2025 05:22:45 PM
 **/
 
 #include <bits/stdc++.h>
@@ -22,21 +22,18 @@ int main() {
   while (T--) {
     int n;
     cin >> n;
-    if (n % 2 == 0) {
-      cout << "NO\n";
-      continue;
+    vector<int> a(n);
+    vector<bool> st(n);
+    bool flag = true;
+    for (int i = 0; i < n; i++) {
+      cin >> a[i];
+      int x = ((i + (a[i] % n + n) % n) % n + n) % n;
+      if (st[x]) {
+        flag = false;
+      }
+      st[x] = true;
     }
-    cout << "YES\n";
-    set<int> S;
-    for (int i = 1; i <= 2 * n; i++) {
-      S.insert(i);
-    }
-    for (int i = 0, x = n - n / 2, y = n + 1; i < (n + 1) / 2; i++, x++, y++) {
-      cout << x << ' ' << y << '\n';
-    }
-    for (int i = 0, x = 1, y = 2 * n - (n / 2) + 1; i < n / 2; i++, x++, y++) {
-      cout << x << ' ' << y << '\n';
-    }
+    cout << (flag ? "YES\n" : "NO\n");
   }
   return 0;
 }
