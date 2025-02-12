@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 02/10/2025 05:22:45 PM
+ * Created Time: 02/11/2025 11:07:09 PM
 **/
 
 #include <bits/stdc++.h>
@@ -20,20 +20,12 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    vector<bool> st(n);
-    bool flag = true;
-    for (int i = 0; i < n; i++) {
-      cin >> a[i];
-      int x = ((i + (a[i] % n + n) % n) % n + n) % n;
-      if (st[x]) {
-        flag = false;
-      }
-      st[x] = true;
-    }
-    cout << (flag ? "YES\n" : "NO\n");
+    string s;
+    cin >> s;
+    s.pop_back();
+    s.pop_back();
+    s += "i";
+    cout << s << '\n';
   }
   return 0;
 }
