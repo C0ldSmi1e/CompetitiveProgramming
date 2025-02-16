@@ -1,8 +1,3 @@
-/**
- * Author: C0ldSmi1e
- * Created Time: 02/11/2025 11:07:09 PM
-**/
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -22,10 +17,15 @@ int main() {
   while (T--) {
     string s;
     cin >> s;
-    s.pop_back();
-    s.pop_back();
-    s += "i";
-    cout << s << '\n';
+    int n = (int) s.size();
+    int ans = (int) s.size();
+    for (int i = 0; i < n - 1; i++) {
+      if (s[i] == s[i + 1]) {
+        ans = 1;
+        break;
+      }
+    }
+    cout << ans << '\n';
   }
   return 0;
 }
