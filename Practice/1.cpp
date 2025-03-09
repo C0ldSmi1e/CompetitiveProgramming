@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 03/08/2025 06:26:25 AM
+ * Created Time: 03/09/2025 06:57:24 AM
 **/
 
 #include <bits/stdc++.h>
@@ -17,42 +17,38 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int n, m;
-  cin >> n >> m;
-  vector<vector<int>> g(n);
-  vector<pair<int, int>> edges(m);
-  for (int i = 0; i < m; i++) {
-    int a, b;
-    cin >> a >> b;
-    --a;
-    --b;
-    edges[i] = make_pair(a, b);
-    g[a].emplace_back(b);
-    g[b].emplace_back(a);
-  }
-  vector<int> s(n, -1);
-  bool flag = true;
-  auto Dfs = [&](auto& self, int u, int c) -> void {
-    s[u] = c;
-    for (auto& v : g[u]) {
-      if (s[v] == -1) {
-        self(self, v, c ^ 1);
-        continue;
-      }
-      flag &= ((c ^ 1) == s[v]);
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto& u : a) {
+      cin >> u;
     }
-  };
-  Dfs(Dfs, 0, 0);
-  if (!flag) {
-    cout << "NO\n";
-    return 0;
+    int l = -1;
+    int r = -1;
+    for (int i = 1; i < n - 1; i++) {
+      int j = i + 1;
+      while (j < n && 1ll * (a[j] - a[j - 1]) * (a[i + 1] - a[i]) > 0) {
+        j += 1;
+      }
+      debug(i, j, a[i - 1], a[i], a[i + 1]);
+      if (j >= n) {
+        break;
+      }
+      if (1ll * (a[i] - a[i - 1]) * (a[i + 1] - a[i]) < 0) {
+        l = i - 1;
+        r = j;
+        break;
+      }
+      i = j - 1;
+    }
+    if (l == -1 || r == -1) {
+      cout << "-1\n";
+      continue;
+    }
+    cout << l + 1 << ' ' << r + 1 << '\n';
   }
-  string ans(m, '#');
-  for (int i = 0; i < m; i++) {
-    auto [a, b] = edges[i];
-    ans[i] = (char) ('0' + s[a]);
-  }
-  cout << "YES\n";
-  cout << ans << '\n';
   return 0;
 }
