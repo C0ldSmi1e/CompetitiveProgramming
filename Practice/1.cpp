@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 03/09/2025 06:57:24 AM
+ * Created Time: 03/10/2025 06:56:27 AM
 **/
 
 #include <bits/stdc++.h>
@@ -20,35 +20,35 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    for (auto& u : a) {
-      cin >> u;
+    int n, m, q;
+    cin >> n >> m >> q;
+    string s;
+    cin >> s;
+    vector<pair<long long, long long>> add;
+    vector<long long> len{n};
+    for (int i = 0; i < m; i++) {
+      long long l, r;
+      cin >> l >> r;
+      --l;
+      --r;
+      add.emplace_back(l, r);
+      len.emplace_back(len.back() + r - l + 1);
     }
-    int l = -1;
-    int r = -1;
-    for (int i = 1; i < n - 1; i++) {
-      int j = i + 1;
-      while (j < n && 1ll * (a[j] - a[j - 1]) * (a[i + 1] - a[i]) > 0) {
-        j += 1;
+    while (q--) {
+      long long k;
+      cin >> k;
+      k--;
+      while (true) {
+        auto it = lower_bound(len.begin(), len.end(), k + 1);
+        if (it == len.begin()) {
+          cout << s[k] << '\n';
+          break;
+        }
+        int i = (int) (it - len.begin());
+        long long p = k + 1 - len[i - 1];
+        k = add[i - 1].first + p - 1;
       }
-      debug(i, j, a[i - 1], a[i], a[i + 1]);
-      if (j >= n) {
-        break;
-      }
-      if (1ll * (a[i] - a[i - 1]) * (a[i + 1] - a[i]) < 0) {
-        l = i - 1;
-        r = j;
-        break;
-      }
-      i = j - 1;
     }
-    if (l == -1 || r == -1) {
-      cout << "-1\n";
-      continue;
-    }
-    cout << l + 1 << ' ' << r + 1 << '\n';
   }
   return 0;
 }
