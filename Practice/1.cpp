@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/07/2025 09:07:31 PM
+ * Created Time: 04/08/2025 07:31:31 AM
 **/
 
 #include <bits/stdc++.h>
@@ -17,31 +17,66 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int T;
-  cin >> T;
-  while (T--) {
-    int n, x;
-    cin >> n >> x;
-    vector<int> a(n);
-    for (auto& u : a) {
-      cin >> u;
-    }
-    sort(a.rbegin(), a.rend());
-    int ans = 0;
-    debug(a);
-    for (int i = 0; i < n; i++) {
-      long long cur = 0;
-      int j = i;
-      while (j < n && cur < x) {
-        cur = 1ll * (j - i + 1) * a[j];
-        j += 1;
-      }
-      if (cur >= x) {
-        ans += 1;
-      }
-      i = j - 1;
-    }
-    cout << ans << '\n';
+  int b, q, l, m;
+  cin >> b >> q >> l >> m;
+  vector<long long> a(m);
+  for (auto& u : a) {
+    cin >> u;
   }
+  if (abs(b) > l) {
+    cout << "0\n";
+    return 0;
+  }
+  set<int> S{a.begin(), a.end()};
+  if (b == 0) {
+    if (S.count(0)) {
+      cout << "0\n";
+      return 0;
+    }
+    cout << "inf\n";
+    return 0;
+  }
+  if (q == 0) {
+    if (!S.count(0)) {
+      cout << "inf\n";
+      return 0;
+    }
+    if (!S.count(b)) {
+      cout << "1\n";
+      return 0;
+    }
+    cout << "0\n";
+    return 0;
+  }
+  if (q == 1) {
+    if (!S.count(b)) {
+      cout << "inf\n";
+    } else {
+      cout << "0\n";
+    }
+    return 0;
+  }
+  if (q == -1) {
+    if (S.count(b) && S.count(-b)) {
+      cout << "0\n";
+    } else {
+      cout << "inf\n";
+    }
+    return 0;
+  }
+  vector<long long> seq;
+  while (true) {
+    long long x = ((int) seq.size() > 0 ? (1ll * seq.back() * q) : b);
+    if (abs(x) <= l) {
+      seq.emplace_back(x);
+      continue;
+    }
+    break;
+  }
+  set<long long> ans{seq.begin(), seq.end()};
+  for (auto& u : S) {
+    ans.erase(u);
+  }
+  cout << (int) ans.size() << '\n';
   return 0;
 }
