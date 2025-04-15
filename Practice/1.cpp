@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/08/2025 07:31:31 AM
+ * Created Time: 04/14/2025 05:26:29 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,66 +17,59 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int b, q, l, m;
-  cin >> b >> q >> l >> m;
-  vector<long long> a(m);
-  for (auto& u : a) {
-    cin >> u;
-  }
-  if (abs(b) > l) {
-    cout << "0\n";
-    return 0;
-  }
-  set<int> S{a.begin(), a.end()};
-  if (b == 0) {
-    if (S.count(0)) {
-      cout << "0\n";
-      return 0;
+  const int N = 100010;
+  vector<vector<int>> factors(N);
+  for (int i = 1; i < N; i++) {
+    for (int j = 1; j <= i / j; j++) {
+      if (i % j == 0) {
+        factors[i].emplace_back(j);
+        if (i / j != j) {
+          factors[i].emplace_back(i / j);
+        }
+      }
     }
-    cout << "inf\n";
-    return 0;
   }
-  if (q == 0) {
-    if (!S.count(0)) {
-      cout << "inf\n";
-      return 0;
+  int T;
+  cin >> T;
+  while (T--) {
+    int n, q;
+    cin >> n >> q;
+    vector<int> a(n);
+    map<int, vector<int>> mp;
+    for (int i = 0; i < n; i++) {
+      cin >> a[i];
+      mp[a[i]].emplace_back(i);
     }
-    if (!S.count(b)) {
-      cout << "1\n";
-      return 0;
+    while (q--) {
+      int x, l, r;
+      cin >> x >> l >> r;
+      --l;
+      --r;
+      vector<int> idx;
+      for (auto& u : factors[x]) {
+        if (mp.count(u)) {
+          auto it = lower_bound(mp[u].begin(), mp[u].end(), l);
+          if (it != mp[u].end()) {
+            idx.emplace_back(*it);
+          }
+        }
+      }
+      sort(idx.begin(), idx.end());
+      long long ans = 0;
+      int i = l;
+      for (auto& j : idx) {
+        if (j > r) {
+          break;
+        }
+        ans += 1ll * (j - i) * x;
+        while (x % a[j] == 0) {
+          x /= a[j];
+        }
+        i = j;
+      }
+      ans += 1ll * (r + 1 - i) * x;
+      cout << ans << '\n';
     }
-    cout << "0\n";
-    return 0;
   }
-  if (q == 1) {
-    if (!S.count(b)) {
-      cout << "inf\n";
-    } else {
-      cout << "0\n";
-    }
-    return 0;
-  }
-  if (q == -1) {
-    if (S.count(b) && S.count(-b)) {
-      cout << "0\n";
-    } else {
-      cout << "inf\n";
-    }
-    return 0;
-  }
-  vector<long long> seq;
-  while (true) {
-    long long x = ((int) seq.size() > 0 ? (1ll * seq.back() * q) : b);
-    if (abs(x) <= l) {
-      seq.emplace_back(x);
-      continue;
-    }
-    break;
-  }
-  set<long long> ans{seq.begin(), seq.end()};
-  for (auto& u : S) {
-    ans.erase(u);
-  }
-  cout << (int) ans.size() << '\n';
   return 0;
 }
