@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 03/25/2025 07:39:15 AM
+ * Created Time: 04/08/2025 07:57:16 AM
 **/
 
 #include <bits/stdc++.h>
@@ -17,34 +17,10 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  long long n, b;
-  cin >> n >> b;
-  map<long long, long long> mp;
-  for (long long i = 2; i <= b / i; i++) {
-    if (b % i == 0) {
-      while (b % i == 0) {
-        b /= i;
-        mp[i] += 1;
-      }
-    }
-  }
-  if (b > 1) {
-    mp[b] = 1;
-  }
-  long long mn = (long long) 1e18;
-  for (auto& [x, c] : mp) {
-    long long z = x;
-    long long cnt = 0;
-    while (true) {
-      cnt += n / z;
-      if (z <= n / x) {
-        z *= x;
-        continue;
-      }
-      break;
-    }
-    mn = min(mn, cnt / c);
-  }
-  cout << mn << '\n';
+  int a;
+  cin >> a;
+  cout << 2 * a - 1 << ' ';
+  cout << "2\n";
+  cout << "1 2\n";
   return 0;
 }

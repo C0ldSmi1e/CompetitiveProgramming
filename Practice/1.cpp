@@ -1,3 +1,8 @@
+/**
+ * Author: C0ldSmi1e
+ * Created Time: 04/08/2025 07:31:31 AM
+**/
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -12,25 +17,66 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int T;
-  cin >> T;
-  while (T--) {
-    multiset<int> S{0, 3, 0, 1, 2, 0, 2, 5};
-    int n;
-    cin >> n;
-    vector<int> a(n);
-    int ans = -1;
-    for (int i = 0; i < n; i++) {
-      int x;
-      cin >> x;
-      if (S.count(x)) {
-        S.erase(S.find(x));
-        if ((int) S.size() == 0) {
-          ans = i;
-        }
-      }
-    }
-    cout << ans + 1 << '\n';
+  int b, q, l, m;
+  cin >> b >> q >> l >> m;
+  vector<long long> a(m);
+  for (auto& u : a) {
+    cin >> u;
   }
+  if (abs(b) > l) {
+    cout << "0\n";
+    return 0;
+  }
+  set<int> S{a.begin(), a.end()};
+  if (b == 0) {
+    if (S.count(0)) {
+      cout << "0\n";
+      return 0;
+    }
+    cout << "inf\n";
+    return 0;
+  }
+  if (q == 0) {
+    if (!S.count(0)) {
+      cout << "inf\n";
+      return 0;
+    }
+    if (!S.count(b)) {
+      cout << "1\n";
+      return 0;
+    }
+    cout << "0\n";
+    return 0;
+  }
+  if (q == 1) {
+    if (!S.count(b)) {
+      cout << "inf\n";
+    } else {
+      cout << "0\n";
+    }
+    return 0;
+  }
+  if (q == -1) {
+    if (S.count(b) && S.count(-b)) {
+      cout << "0\n";
+    } else {
+      cout << "inf\n";
+    }
+    return 0;
+  }
+  vector<long long> seq;
+  while (true) {
+    long long x = ((int) seq.size() > 0 ? (1ll * seq.back() * q) : b);
+    if (abs(x) <= l) {
+      seq.emplace_back(x);
+      continue;
+    }
+    break;
+  }
+  set<long long> ans{seq.begin(), seq.end()};
+  for (auto& u : S) {
+    ans.erase(u);
+  }
+  cout << (int) ans.size() << '\n';
   return 0;
 }
