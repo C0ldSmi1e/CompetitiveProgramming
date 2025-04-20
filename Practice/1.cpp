@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/14/2025 05:26:29 PM
+ * Created Time: 04/19/2025 09:39:19 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,59 +17,22 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  const int N = 100010;
-  vector<vector<int>> factors(N);
-  for (int i = 1; i < N; i++) {
-    for (int j = 1; j <= i / j; j++) {
-      if (i % j == 0) {
-        factors[i].emplace_back(j);
-        if (i / j != j) {
-          factors[i].emplace_back(i / j);
-        }
-      }
-    }
-  }
   int T;
   cin >> T;
   while (T--) {
-    int n, q;
-    cin >> n >> q;
-    vector<int> a(n);
-    map<int, vector<int>> mp;
-    for (int i = 0; i < n; i++) {
-      cin >> a[i];
-      mp[a[i]].emplace_back(i);
+    int n, s, m;
+    cin >> n >> s >> m;
+    vector<pair<int, int>> a(n);
+    for (auto& [x, y] : a) {
+      cin >> x >> y;
     }
-    while (q--) {
-      int x, l, r;
-      cin >> x >> l >> r;
-      --l;
-      --r;
-      vector<int> idx;
-      for (auto& u : factors[x]) {
-        if (mp.count(u)) {
-          auto it = lower_bound(mp[u].begin(), mp[u].end(), l);
-          if (it != mp[u].end()) {
-            idx.emplace_back(*it);
-          }
-        }
-      }
-      sort(idx.begin(), idx.end());
-      long long ans = 0;
-      int i = l;
-      for (auto& j : idx) {
-        if (j > r) {
-          break;
-        }
-        ans += 1ll * (j - i) * x;
-        while (x % a[j] == 0) {
-          x /= a[j];
-        }
-        i = j;
-      }
-      ans += 1ll * (r + 1 - i) * x;
-      cout << ans << '\n';
+    bool flag = false;
+    for (int i = 1; i < n; i++) {
+      flag |= a[i].first - a[i - 1].second >= s;
     }
+    flag |= a[0].first >= s;
+    flag |= m - a.back().second >= s;
+    cout << (flag ? "YES\n" : "NO\n");
   }
   return 0;
 }
