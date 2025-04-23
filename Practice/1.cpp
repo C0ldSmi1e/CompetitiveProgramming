@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/19/2025 09:39:19 PM
+ * Created Time: 04/22/2025 10:12:20 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,22 +17,61 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int T;
-  cin >> T;
-  while (T--) {
-    int n, s, m;
-    cin >> n >> s >> m;
-    vector<pair<int, int>> a(n);
-    for (auto& [x, y] : a) {
-      cin >> x >> y;
-    }
-    bool flag = false;
-    for (int i = 1; i < n; i++) {
-      flag |= a[i].first - a[i - 1].second >= s;
-    }
-    flag |= a[0].first >= s;
-    flag |= m - a.back().second >= s;
-    cout << (flag ? "YES\n" : "NO\n");
+  int n, m;
+  cin >> n >> m;
+  vector<int> a(n);
+  for (auto& u : a) {
+    cin >> u;
   }
+  vector<int> cnt(n);
+  for (int i = 0; i < n; i++) {
+    cnt[i] = (int) (a[i] == 0);
+    if (i - 1 >= 0) {
+      cnt[i] += cnt[i - 1];
+    }
+  }
+  vector<int> dp(m + 5);
+  vector<int> sum(m + 5);
+  auto Add = [&](vector<int>& b, int l, int r, int v) -> void {
+    r = min(r, m);
+    l = max(l, 0);
+    if (l > r) {
+      return;
+    }
+    b[l] += v;
+    b[r + 1] -= v;
+  };
+  for (int i = 0; i < n; i++) {
+    auto ndp = dp;
+    if (a[i] == 0) {
+      for (int j = 1; j <= m; j++) {
+        sum[j] += sum[j - 1];
+      }
+      for (int j = 0; j <= m; j++) {
+        dp[j] += sum[j];
+      }
+      sum = vector<int>(m + 5, 0);
+      for (int j = 0; j <= m; j++) {
+        ndp[j] = dp[j];
+        if (j - 1 >= 0) {
+          ndp[j] = max(ndp[j], ndp[j - 1]);
+        }
+      }
+    }
+    if (a[i] > 0) {
+      Add(sum, a[i], cnt[i], 1);
+    }
+    if (a[i] < 0) {
+      Add(sum, 0, cnt[i] + a[i], 1);
+    }
+    swap(dp, ndp);
+  }
+  for (int j = 1; j <= m; j++) {
+    sum[j] += sum[j - 1];
+  }
+  for (int j = 0; j <= m; j++) {
+    dp[j] += sum[j];
+  }
+  cout << *max_element(dp.begin(), dp.end()) << '\n';
   return 0;
 }
