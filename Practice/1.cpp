@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/23/2025 08:37:47 AM
+ * Created Time: 05/15/2025 10:52:04 PM
 **/
 
 #include <bits/stdc++.h>
@@ -22,17 +22,24 @@ int main() {
   while (T--) {
     int n;
     cin >> n;
-    if (n & 1) {
-      for (int i = 0; i < n; i += 2) {
-        cout << i + 1 << ' ';
-      }
-      for (int i = 1; i < n; i += 2) {
-        cout << i + 1 << ' ';
-      }
-      cout << '\n';
+    if (n < 5) {
+      cout << "-1\n";
       continue;
     }
-    cout << "-1\n";
+    for (int i = 1; i <= n; i += 2) {
+      if (i == 5) {
+        continue;
+      }
+      cout << i << ' ';
+    }
+    cout << "5 4 ";
+    for (int i = 2; i <= n; i += 2) {
+      if (i == 4) {
+        continue;
+      }
+      cout << i << ' ';
+    }
+    cout << '\n';
   }
   return 0;
 }

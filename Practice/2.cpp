@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/08/2025 07:31:31 AM
+ * Created Time: 04/30/2025 11:25:36 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,59 +17,17 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int b, q, l, m;
-  cin >> b >> q >> l >> m;
-  vector<long long> a(m);
-  for (auto& u : a) {
-    cin >> u;
-  }
-  set<int> S{a.begin(), a.end()};
-  if (q == 0) {
-    if (!S.count(0)) {
-      cout << "inf\n";
-      return 0;
-    }
-    if (!S.count(b)) {
-      cout << "1\n";
-      return 0;
-    }
-    cout << "0\n";
+  int n, s;
+  cin >> n >> s;
+  if ((n == 1 && s == 1) || s <= 2 * (n - 1)) {
+    cout << "NO\n";
     return 0;
   }
-  if (q == 1) {
-    if (!S.count(b)) {
-      cout << "inf\n";
-    } else {
-      cout << "0\n";
-    }
-    return 0;
+  cout << "YES\n";
+  for (int i = 0; i < n - 1; i++) {
+    cout << "1 ";
   }
-  if (q == -1) {
-    if (S.count(b) && S.count(-b)) {
-      cout << "0\n";
-    } else {
-      cout << "inf\n";
-    }
-    return 0;
-  }
-  if (q < 0) {
-    cout << "inf\n";
-    return 0;
-  }
-  vector<long long> seq{b};
-  while (true) {
-    long long x = 1ll * seq.back() * q;
-    if (x <= l) {
-      seq.emplace_back(1ll * seq.back() * q);
-      continue;
-    }
-    break;
-  }
-  set<long long> ans{seq.begin(), seq.end()};
-  debug(ans);
-  for (auto& u : S) {
-    ans.erase(u);
-  }
-  cout << (int) ans.size() << '\n';
+  cout << s - (n - 1) << '\n';
+  cout << n << '\n';
   return 0;
 }
