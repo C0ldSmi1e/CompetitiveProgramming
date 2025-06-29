@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/19/2025 09:39:19 PM
+ * Created Time: 06/28/2025 10:27:20 PM
 **/
 
 #include <bits/stdc++.h>
@@ -20,19 +20,60 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int n, s, m;
-    cin >> n >> s >> m;
-    vector<pair<int, int>> a(n);
-    for (auto& [x, y] : a) {
-      cin >> x >> y;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto& u : a) {
+      cin >> u;
     }
-    bool flag = false;
-    for (int i = 1; i < n; i++) {
-      flag |= a[i].first - a[i - 1].second >= s;
+    const int INF = (int) 1e9;
+    int ans = INF;
+    for (int i = 0; i < n; i++) {
+      if (i > 0) {
+        int mn = INF;
+        int mx = -INF;
+        int cnt = 0;
+        bool flag = false;
+        for (int j = i - 1; j >= 0; j--) {
+          mn = min(mn, a[j]);
+          mx = max(mx, a[j]);
+          int l = a[i] - 1;
+          int r = a[i] + 1;
+          if (max(l, mn) <= min(r, mx)) {
+            flag = true;
+            break;
+          }
+          cnt += 1;
+        }
+        if (flag) {
+          ans = min(ans, cnt);
+        }
+      }
+      if (i + 1 < n) {
+        int mn = INF;
+        int mx = -INF;
+        int cnt = 0;
+        bool flag = false;
+        for (int j = i + 1; j < n; j++) {
+          mn = min(mn, a[j]);
+          mx = max(mx, a[j]);
+          int l = a[i] - 1;
+          int r = a[i] + 1;
+          if (max(l, mn) <= min(r, mx)) {
+            flag = true;
+            break;
+          }
+          cnt += 1;
+        }
+        if (flag) {
+          ans = min(ans, cnt);
+        }
+      }
     }
-    flag |= a[0].first >= s;
-    flag |= m - a.back().second >= s;
-    cout << (flag ? "YES\n" : "NO\n");
+    if (ans == INF) {
+      ans = -1;
+    }
+    cout << ans << '\n';
   }
   return 0;
 }
