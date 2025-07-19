@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 07/17/2025 11:42:52 PM
+ * Created Time: 07/18/2025 11:54:48 PM
 **/
 
 #include <bits/stdc++.h>
@@ -20,22 +20,13 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int a, b;
-    cin >> a >> b;
-    if (a * 2 < b) {
-      cout << "0\n";
-      continue;
+    string s;
+    cin >> s;
+    set<char> S;
+    for (auto& c : s) {
+      S.insert(c);
     }
-    int l = 0, r = a;
-    while (l < r) {
-      int mid = (l + r) >> 1;
-      if (a - mid < b - 2 * mid) {
-        l = mid + 1;
-      } else {
-        r = mid;
-      }
-    }
-    cout << a - r << '\n';
+    cout << *S.begin() << '\n';
   }
   return 0;
 }
