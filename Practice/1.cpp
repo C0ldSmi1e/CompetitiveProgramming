@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 07/18/2025 11:54:48 PM
+ * Created Time: 07/23/2025 11:19:11 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,16 +17,6 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int T;
-  cin >> T;
-  while (T--) {
-    string s;
-    cin >> s;
-    set<char> S;
-    for (auto& c : s) {
-      S.insert(c);
-    }
-    cout << *S.begin() << '\n';
-  }
+  cout << "20\n";
   return 0;
 }
