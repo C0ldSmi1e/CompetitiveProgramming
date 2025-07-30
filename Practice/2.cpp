@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 04/08/2025 07:31:31 AM
+ * Created Time: 05/31/2025 05:38:39 AM
 **/
 
 #include <bits/stdc++.h>
@@ -13,63 +13,51 @@ using namespace std;
 #define debug(...) 42
 #endif
 
+template <typename T, typename U>
+vector<T> Dijkstra(const vector<vector<pair<int, U>>>& g, int start, const T INF) {
+  int n = static_cast<int>(g.size());
+  assert(start >= 0 && start < n);
+  vector<T> dist(n, INF);
+  dist[start] = 0;
+  priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> heap;
+  heap.emplace(dist[start], start);
+  debug(dist);
+  vector<bool> st(n);
+  while ((int) heap.size() > 0) {
+    auto [d, u] = heap.top();
+    heap.pop();
+    if (dist[u] != d || st[u]) {
+      continue;
+    }
+    st[u] = true;
+    for (auto& [v, w] : g[u]) {
+      if (dist[v] > w | dist[u]) {
+        dist[v] = w | dist[u];
+        heap.emplace(dist[v], v);
+      }
+    }
+  }
+  // returns INF if there's no path
+  return dist;
+}
+
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  int b, q, l, m;
-  cin >> b >> q >> l >> m;
-  vector<long long> a(m);
-  for (auto& u : a) {
-    cin >> u;
+  int n, m;
+  cin >> n >> m;
+  vector<vector<pair<int, int>>> g(n);
+  for (int i = 0; i < m; i++) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    --a;
+    --b;
+    g[a].emplace_back(b, c);
+    g[b].emplace_back(a, c);
   }
-  set<int> S{a.begin(), a.end()};
-  if (q == 0) {
-    if (!S.count(0)) {
-      cout << "inf\n";
-      return 0;
-    }
-    if (!S.count(b)) {
-      cout << "1\n";
-      return 0;
-    }
-    cout << "0\n";
-    return 0;
-  }
-  if (q == 1) {
-    if (!S.count(b)) {
-      cout << "inf\n";
-    } else {
-      cout << "0\n";
-    }
-    return 0;
-  }
-  if (q == -1) {
-    if (S.count(b) && S.count(-b)) {
-      cout << "0\n";
-    } else {
-      cout << "inf\n";
-    }
-    return 0;
-  }
-  if (q < 0) {
-    cout << "inf\n";
-    return 0;
-  }
-  vector<long long> seq{b};
-  while (true) {
-    long long x = 1ll * seq.back() * q;
-    if (x <= l) {
-      seq.emplace_back(1ll * seq.back() * q);
-      continue;
-    }
-    break;
-  }
-  set<long long> ans{seq.begin(), seq.end()};
-  debug(ans);
-  for (auto& u : S) {
-    ans.erase(u);
-  }
-  cout << (int) ans.size() << '\n';
+  const int INF = (int) 2e9;
+  auto d = Dijkstra(g, 0, INF);
+  cout << d.back() << '\n';
   return 0;
 }

@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 07/23/2025 11:19:11 PM
+ * Created Time: 07/28/2025 11:22:15 AM
 **/
 
 #include <bits/stdc++.h>
@@ -17,6 +17,5 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
-  cout << "20\n";
   return 0;
 }
