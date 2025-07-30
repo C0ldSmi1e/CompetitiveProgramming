@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 07/28/2025 11:22:15 AM
+ * Created Time: 07/30/2025 09:53:37 AM
 **/
 
 #include <bits/stdc++.h>
@@ -17,5 +17,13 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
+  int T;
+  cin >> T;
+  while (T--) {
+    string s;
+    cin >> s;
+    int ones = count(s.begin(), s.end(), '1');
+    cout << ones << '\n';
+  }
   return 0;
 }
