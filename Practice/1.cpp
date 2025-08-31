@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 08/05/2025 11:08:50 PM
+ * Created Time: 08/30/2025 08:53:09 PM
 **/
 
 #include <bits/stdc++.h>
@@ -13,98 +13,89 @@ using namespace std;
 #define debug(...) 42
 #endif
 
-template <typename T>
-class Fenwick {
- public:
-  vector<T> fenw;
-  int n;
-  Fenwick(int _n) : n(_n) {
-    fenw.resize(n);
-  }
-  inline void Add(int x, T v) {
-    assert(x >= 0 && x < n);
-    while (x < n) {
-      fenw[x] += v;
-      x |= (x + 1);
-    }
-  }
-  inline T Get(int x) {
-    T res{};
-    while (x >= 0) {
-      res += fenw[x];
-      x = (x & (x + 1)) - 1;
-    }
-    return res;
-  }
-  inline T Get(int l, int r) {
-    assert(l >= 0 && l < n && r >= 0 && r < n);
-    T res = Get(r);
-    if (l - 1 >= 0) {
-      res -= Get(l - 1);
-    }
-    return res;
-  }
-  inline int KthMin(int k) {
-    // KthMax = n - KthMin + 1
-    assert(k >= 1 && k <= n);
-    int cnt = 0, x = 0;
-    for (int i = (int) log2(n); i >= 0; i--) {
-      x += (1 << i);
-      if (x >= n || cnt + fenw[x - 1] >= k) {
-        x -= (1 << i);
-      } else {
-        cnt += fenw[x - 1];
-      }
-    }
-    return x;
-  }
-};
-
-// struct Node {
-//   int a = ...; // don't forget to set default value
-//   inline void operator += (Node& other) {
-//     ...
-//   }
-// };
-
 int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
   int n;
   cin >> n;
-  vector<int> a(n);
-  for (auto& u : a) {
-    cin >> u;
-  }
-  vector<int> b(n);
-  Fenwick<int> fenw(n);
-  for (auto& u : b) {
-    cin >> u;
-    fenw.Add(u, 1);
-  }
-  auto Find = [&](int l, int r) -> int {
-    while (l < r) {
-      int mid = (l + r) >> 1;
-      if (fenw.Get(l, mid) > 0) {
-        r = mid;
-      } else {
-        l = mid + 1;
+  string s;
+  cin >> s;
+  auto Greater = [&](string& a, string& b) -> bool {
+    if ((int) a.size() > (int) b.size()) {
+      return true;
+    }
+    if ((int) a.size() < (int) b.size()) {
+      return false;
+    }
+    for (int i = 0; i < (int) a.size(); i++) {
+      if (a[i] == b[i]) {
+        continue;
       }
+      if (a[i] < b[i]) {
+        return false;
+      }
+      return true;
     }
-    return r;
+    return false;
   };
-  for (int i = 0; i < n; i++) {
-    int y = (n - a[i] + n) % n;
-    int x = -1;
-    if (fenw.Get(y, n - 1) == 0) {
-      x = Find(0, y);
-    } else {
-      x = Find(y, n - 1);
+  auto Add = [&](string a, string b) -> string {
+    reverse(a.begin(), a.end());
+    reverse(b.begin(), b.end());
+    string c;
+    for (int i = 0, j = 0, t = 0; ; i++, j++) {
+      if (i >= (int) a.size() && j >= (int) b.size() && t == 0) {
+        break;
+      }
+      if (i < (int) a.size()) {
+        t += (int) (a[i] - '0');
+      }
+      if (j < (int) b.size()) {
+        t += (int) (b[j] - '0');
+      }
+      c += (char) (t % 10 + '0');
+      t /= 10;
     }
-    fenw.Add(x, -1);
-    cout << (x + a[i]) % n << ' ';
+    reverse(c.begin(), c.end());
+    return c;
+  };
+  const string INF = string((int) 1e6, '9');
+  auto Find = [&](int x) -> string {
+    if (s[x] != '0') {
+      return Add(s.substr(0, x), s.substr(x));
+    }
+    int l = x;
+    while (l >= 0 && s[l] == '0') {
+      --l;
+    }
+    string ls;
+    if (l <= 0) {
+      ls = INF;
+    } else {
+      ls = Add(s.substr(0, l), s.substr(l));
+    }
+    int r = x;
+    while (r < n && s[r] == '0') {
+      ++r;
+    }
+    string rs;
+    if (r >= n) {
+      rs = INF;
+    } else {
+      rs = Add(s.substr(0, r), s.substr(r));
+    }
+    if (Greater(ls, rs)) {
+      return rs;
+    }
+    return ls;
+  };
+  string ans = INF;
+  for (int i = max(0, n / 2 - 5); i < min(n, n / 2 + 5); i++) {
+    auto t = Find(i);
+    if (Greater(ans, t)) {
+      ans = t;
+    }
   }
-  cout << '\n';
+  cout << ans << '\n';
   return 0;
 }
