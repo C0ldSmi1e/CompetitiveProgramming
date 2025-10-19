@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 09/07/2025 10:04:25 PM
+ * Created Time: 10/18/2025 09:42:35 PM
 **/
 
 #include <bits/stdc++.h>
@@ -17,5 +17,19 @@ int main() {
   cin.tie(nullptr)->sync_with_stdio(false);
   cout << fixed << setprecision(10);
 
+  int T;
+  cin >> T;
+  while (T--) {
+    int n;
+    cin >> n;
+    int mx = 0;
+    for (int i = 0; i < n; i++) {
+      int x;
+      cin >> x;
+      mx = max(mx, x);
+    }
+    cout << mx << '\n';
+  }
   return 0;
 }
+
