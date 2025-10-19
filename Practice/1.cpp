@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 07/31/2025 10:08:18 AM
+ * Created Time: 10/18/2025 09:42:35 PM
 **/
 
 #include <bits/stdc++.h>
@@ -22,18 +22,13 @@ int main() {
   while (T--) {
     int n;
     cin >> n;
-    vector<int> a(n);
-    for (auto& u : a) {
-      cin >> u;
+    int mx = 0;
+    for (int i = 0; i < n; i++) {
+      int x;
+      cin >> x;
+      mx = max(mx, x);
     }
-    int c0 = count(a.begin(), a.end(), 0);
-    int c1 = count(a.begin(), a.end(), 1);
-    int t = min(c0, c1);
-    c0 -= t;
-    c1 -= t;
-    int ans = t * 2 + c0;
-    ans += accumulate(a.begin(), a.end(), 0) - t;
-    cout << ans << '\n';
+    cout << mx << '\n';
   }
   return 0;
 }
