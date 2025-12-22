@@ -1,6 +1,6 @@
 /**
  * Author: C0ldSmi1e
- * Created Time: 10/18/2025 09:42:35 PM
+ * Created Time: 12/21/2025 10:18:43 PM
 **/
 
 #include <bits/stdc++.h>
@@ -20,16 +20,15 @@ int main() {
   int T;
   cin >> T;
   while (T--) {
-    int n;
-    cin >> n;
-    int mx = 0;
-    for (int i = 0; i < n; i++) {
-      int x;
-      cin >> x;
-      mx = max(mx, x);
-    }
-    cout << mx << '\n';
+    int l, a, b;
+    cin >> l >> a >> b;
+    int ans = a;
+    set<int> S{a};
+    do {
+      a = (a + b) % l;
+      ans = max(ans, a);
+    } while (!S.count(a));
+    cout << ans << '\n';
   }
   return 0;
 }
-
