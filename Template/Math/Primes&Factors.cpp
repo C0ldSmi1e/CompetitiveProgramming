@@ -143,7 +143,7 @@ void init(int n) {
         fac_cnt[t] = fac_cnt[i] / (minp_cnt[i] + 1) * (minp_cnt[i] + 2);
         fac_sum[t] = fac_sum[i] * primes[j] + exminp[i];
         exminp[t] = exminp[i];
-        minp_cnt[t] = minp_cnt[t] + 1;
+        minp_cnt[t] = minp_cnt[i] + 1;
         break;
       }
       fac_cnt[t] = fac_cnt[i] * fac_cnt[primes[j]];

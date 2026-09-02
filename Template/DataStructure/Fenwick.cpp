@@ -285,8 +285,8 @@ void add(int x, int c) {
 int get(int x) {
   int res = 0;
   for (int i = x; i; i -= lowbit(i)) {
-    if (mark[x] == timestamp) {
-      res += tr[x];
+    if (mark[i] == timestamp) {
+      res += tr[i];
     }
   }
   return res;
